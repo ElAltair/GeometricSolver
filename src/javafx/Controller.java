@@ -2,8 +2,8 @@ package javafx;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
@@ -12,12 +12,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+
 
 
 public class Controller {
 
+    private final double R = 3.0;
+    private final double strokeSize = 4.0;
     public Button rectButton;
     public Button pointButton;
     public Button lineButton;
@@ -27,10 +29,11 @@ public class Controller {
     private EventHandler<MouseEvent> onDragEvent;
     private EventHandler<MouseEvent> onPressedEvent;
     private EventHandler<MouseEvent> onMouseMoved;
+    private EventHandler<MouseEvent> onCirclePressedEvent;
+    private EventHandler<MouseEvent> onCircleDraggedEvent;
     private boolean catchMouseCoordinates;
-
-
     private ArrayList<Shape> createdPoint;
+    private ArrayList<Shape> boundPoints;
     private Line tempLineForLineVisualization;
     private ArrayList<Line> tempLineForRectangle;
 
@@ -39,6 +42,7 @@ public class Controller {
         catchMouseCoordinates = false;
         createdPoint = new ArrayList<>();
         tempLineForRectangle = new ArrayList<>();
+        boundPoints = new ArrayList<>();
 
         root.getScene().setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {
@@ -46,18 +50,135 @@ public class Controller {
                 root.getScene().setCursor(Cursor.DEFAULT);
                 updateMouseClickedHandler(DrawingObjects.NONE);
                 root.getChildren().remove(tempLineForLineVisualization);
+
+                // rectangle temp lines
                 for (Line l : tempLineForRectangle)
                     root.getChildren().remove(l);
+                tempLineForRectangle.clear();
 
+                // line temp points
                 for (Shape s : createdPoint)
                     root.getChildren().remove(s);
-
-                tempLineForRectangle.clear();
-                tempLineForLineVisualization = null;
                 createdPoint.clear();
+
+                // line temp line
+                tempLineForLineVisualization = null;
+
+                // bound points
+                for (Shape s : boundPoints)
+                    root.getChildren().remove(s);
+                boundPoints.clear();
             }
         });
 
+        Pos rectPos = new Pos();
+
+        onPressedEvent = event -> {
+            // r.setFill(Color.RED);
+            Shape shape = (Shape) event.getSource();
+            double nodeX = event.getX();
+            double nodeY = event.getY();
+            double deltaX = root.getScene().getX() - event.getSceneX();
+            double deltaY = root.getScene().getY() - event.getSceneY();
+            double rectPosX = 0.0;
+            double rectPosY = 0.0;
+            if (shape instanceof Rectangle) {
+                rectPosX = event.getSceneX() - ((Rectangle) event.getSource()).getX();
+                rectPosY = event.getSceneY() - ((Rectangle) event.getSource()).getY();
+                System.out.println("RECTANGLE");
+
+            }
+            System.out.println("Event: " + nodeX + " " + nodeY);
+            System.out.println("Scene Event: " + event.getSceneX() + " " + event.getSceneY());
+            System.out.println("Shape Event: " + ((Node) event.getSource()).getTranslateX() + " " + ((Node) event.getSource()).getTranslateY());
+            if (shape instanceof Rectangle)
+                System.out.println("Rect Event: " + rectPosX + " " + rectPosY);
+            System.out.println("Shape Event: " + deltaX + " " + deltaY);
+            System.out.println();
+            Shape node = ((Shape) event.getSource());
+            if (node instanceof Rectangle) {
+                rectPos.x = rectPosX;
+                rectPos.y = rectPosY;
+
+                Rectangle rectangle = (Rectangle) node;
+                double leftTopX = rectangle.getX();
+                double leftTopY = rectangle.getY();
+                double width = rectangle.getWidth();
+                double height = rectangle.getHeight();
+
+                System.out.println("Width = " + width);
+                System.out.println("Height = " + height);
+                System.out.println("Start X = " + leftTopX + " Start Y = " + leftTopY);
+
+                // create 4 points around rectangle
+                Circle topLeft = new Circle(leftTopX, leftTopY, R);
+                Circle topRight = new Circle(leftTopX + width, leftTopY, R);
+                Circle bottomLeft = new Circle(leftTopX, leftTopY + height, R);
+                Circle bottomRight = new Circle(leftTopX + width, leftTopY + height, R);
+                boundPoints.add(topLeft);
+                boundPoints.add(topRight);
+                boundPoints.add(bottomLeft);
+                boundPoints.add(bottomRight);
+                for (Shape s : boundPoints)
+                    root.getChildren().add(s);
+
+            }
+            //r.getScene().setCursor(Cursor.MOVE);
+        };
+
+        onDragEvent = event -> {
+            double ofsetX = event.getSceneX();
+            double ofsetY = event.getSceneY();
+            //System.out.println("Rect: " + ((Rectangle) event.getSource()).getX() + " " + ((Rectangle) event.getSource()).getY());
+            //System.out.println("Delta x = " + ofsetX + " Delta y = " + ofsetY);
+            //double prevPosX = ((Rectangle)event.getSource()).getX();
+            //double prevPosy = ((Rectangle)event.getSource()).getY();
+            if (event.getSource() instanceof Rectangle) {
+                Rectangle r = ((Rectangle) event.getSource());
+                if (rectPos.x > r.getWidth()) {
+                    r.setX(ofsetX + rectPos.x);
+                    r.setY(ofsetY + rectPos.y);
+                } else {
+                    r.setX(ofsetX - rectPos.x);
+                    r.setY(ofsetY - rectPos.y);
+                }
+            }
+        };
+
+        Pos oldPoint = new Pos();
+        onCirclePressedEvent = event -> {
+
+            // r.setFill(Color.RED);
+            Circle source = (Circle) event.getSource();
+            double nodeX = event.getX();
+            double nodeY = event.getY();
+            double deltaX = root.getScene().getX() - event.getSceneX();
+            double deltaY = root.getScene().getY() - event.getSceneY();
+            double pointPosX = 0.0;
+            double pointPosY = 0.0;
+
+            pointPosX = event.getSceneX() - ((Circle) event.getSource()).getCenterX();
+            pointPosY = event.getSceneY() - ((Circle) event.getSource()).getCenterY();
+            System.out.println("POINT");
+
+            oldPoint.x = pointPosX;
+            oldPoint.y = pointPosY;
+
+        };
+
+        onCircleDraggedEvent = event -> {
+            double ofsetX = event.getSceneX();
+            double ofsetY = event.getSceneY();
+            Circle c = ((Circle) event.getSource());
+            c.setCenterX(ofsetX + oldPoint.x);
+            c.setCenterY(ofsetY + oldPoint.y);
+        };
+
+
+        onMouseMoved = event -> {
+            sceneXCoord.setText(((Double) event.getX()).toString());
+            sceneYCoord.setText(((Double) event.getY()).toString());
+        };
 
     }
 
@@ -69,16 +190,12 @@ public class Controller {
     }
 
     public void createRect(ActionEvent actionEvent) {
-
         catchMouseCoordinates = true;
         root.getScene().setCursor(Cursor.CROSSHAIR);
         updateMouseClickedHandler(DrawingObjects.RECTANGLE);
-
-
     }
 
     public void createLine(ActionEvent actionEvent) {
-
         catchMouseCoordinates = true;
         root.getScene().setCursor(Cursor.CROSSHAIR);
         updateMouseClickedHandler(DrawingObjects.LINE);
@@ -102,24 +219,34 @@ public class Controller {
             controller.sceneYCoord.setText(((Double) e.getY()).toString());
         });
         */
-
     }
 
     void updateMouseClickedHandler(DrawingObjects type) {
-        final double strokeSize = 4.0;
         if (catchMouseCoordinates) {
             if (type == DrawingObjects.POINT) {
                 root.getScene().setOnMouseClicked((e) -> {
                     double xClick = e.getSceneX();
                     double yClick = e.getSceneY();
-                    Circle point = new Circle(xClick, yClick, 2.0);
+                    Circle point = new Circle(xClick, yClick, R);
+
+                    point.setOnMouseEntered(((event) -> {
+                        Circle circle = (Circle) event.getSource();
+                        circle.setStroke(Color.RED);
+                    }));
+                    point.setOnMouseExited((event) -> {
+                        Circle circle = (Circle) event.getSource();
+                        circle.setStroke(Color.GREEN);
+                    });
+
+                    point.setOnMouseClicked(onCirclePressedEvent);
+                    point.setOnMouseDragged(onCircleDraggedEvent);
                     root.getChildren().add(point);
                 });
             } else if (type == DrawingObjects.LINE) {
                 root.getScene().setOnMouseClicked((clickedEvent) -> {
                     double xClick = clickedEvent.getSceneX();
                     double yClick = clickedEvent.getSceneY();
-                    Circle point = new Circle(xClick, yClick, 2.0);
+                    Circle point = new Circle(xClick, yClick, R);
                     createdPoint.add(point);
                     root.getChildren().add(point);
 
@@ -135,16 +262,101 @@ public class Controller {
                     if (createdPoint.size() == 2) {
                         Line line = new Line(((Circle) createdPoint.get(0)).getCenterX(), ((Circle) createdPoint.get(0)).getCenterY(), ((Circle) createdPoint.get(1)).getCenterX(), ((Circle) createdPoint.get(1)).getCenterY());
                         line.setStroke(Color.GREEN);
+
+
+                        line.setOnMouseEntered(((event) -> {
+                            Line tLine = (Line) event.getSource();
+                            tLine.setStroke(Color.BLUE);
+                        }));
+                        line.setOnMouseExited((event) -> {
+                            Line tLine = (Line) event.getSource();
+                            tLine.setStroke(Color.GREEN);
+                        });
+                        createdPoint.get(0).setOnMouseEntered(((event) -> {
+                            Circle circle = (Circle) event.getSource();
+                            circle.setStroke(Color.RED);
+                        }));
+                        createdPoint.get(0).setOnMouseExited((event) -> {
+                            Circle circle = (Circle) event.getSource();
+                            circle.setStroke(Color.GREEN);
+                        });
+                        createdPoint.get(1).setOnMouseEntered(((event) -> {
+                            Circle circle = (Circle) event.getSource();
+                            circle.setStroke(Color.RED);
+                        }));
+                        createdPoint.get(1).setOnMouseExited((event) -> {
+                            Circle circle = (Circle) event.getSource();
+                            circle.setStroke(Color.GREEN);
+                        });
+
+                        Pos oldPoint = new Pos();
+                        createdPoint.get(0).setOnMouseClicked((event) -> {
+                            // r.setFill(Color.RED);
+                            Circle source = (Circle) event.getSource();
+                            double nodeX = event.getX();
+                            double nodeY = event.getY();
+                            double deltaX = root.getScene().getX() - event.getSceneX();
+                            double deltaY = root.getScene().getY() - event.getSceneY();
+                            double pointPosX = 0.0;
+                            double pointPosY = 0.0;
+
+                            pointPosX = event.getSceneX() - ((Circle) event.getSource()).getCenterX();
+                            pointPosY = event.getSceneY() - ((Circle) event.getSource()).getCenterY();
+                            System.out.println("POINT");
+
+                            oldPoint.x = pointPosX;
+                            oldPoint.y = pointPosY;
+
+                        });
+                        createdPoint.get(1).setOnMouseClicked((event -> {
+                            // r.setFill(Color.RED);
+                            Circle source = (Circle) event.getSource();
+                            double nodeX = event.getX();
+                            double nodeY = event.getY();
+                            double deltaX = root.getScene().getX() - event.getSceneX();
+                            double deltaY = root.getScene().getY() - event.getSceneY();
+                            double pointPosX = 0.0;
+                            double pointPosY = 0.0;
+
+                            pointPosX = event.getSceneX() - ((Circle) event.getSource()).getCenterX();
+                            pointPosY = event.getSceneY() - ((Circle) event.getSource()).getCenterY();
+                            System.out.println("POINT");
+
+                            oldPoint.x = pointPosX;
+                            oldPoint.y = pointPosY;
+                        }));
+                        createdPoint.get(0).setOnMouseDragged((event) -> {
+                            double ofsetX = event.getSceneX();
+                            double ofsetY = event.getSceneY();
+                            Circle c = ((Circle) event.getSource());
+                            c.setCenterX(ofsetX + oldPoint.x);
+                            c.setCenterY(ofsetY + oldPoint.y);
+                            line.setStartX(ofsetX + oldPoint.x);
+                            line.setStartY(ofsetY + oldPoint.y);
+
+                        });
+                        createdPoint.get(1).setOnMouseDragged((event -> {
+                            double ofsetX = event.getSceneX();
+                            double ofsetY = event.getSceneY();
+                            Circle c = ((Circle) event.getSource());
+                            c.setCenterX(ofsetX + oldPoint.x);
+                            c.setCenterY(ofsetY + oldPoint.y);
+                            line.setEndX(ofsetX + oldPoint.x);
+                            line.setEndY(ofsetY + oldPoint.y);
+
+                        }));
+
                         root.getChildren().add(line);
                         createdPoint.clear();
                         root.getScene().setOnMouseMoved(null);
                     }
                 });
             } else if (type == DrawingObjects.RECTANGLE) {
+
                 root.getScene().setOnMouseClicked((clickedEvent) -> {
                     double startX = clickedEvent.getSceneX();
                     double startY = clickedEvent.getSceneY();
-                    Circle point = new Circle(startX, startY, 2.0);
+                    Circle point = new Circle(startX, startY, R);
                     createdPoint.add(point);
                     root.getChildren().add(point);
 
@@ -268,5 +480,9 @@ public class Controller {
             root.getScene().setOnMouseMoved(onMouseMoved);
         }
 
+    }
+
+    static class Pos {
+        double x, y;
     }
 }

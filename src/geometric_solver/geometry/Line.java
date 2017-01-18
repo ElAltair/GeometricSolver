@@ -1,4 +1,6 @@
-package geometric_solver;
+package geometric_solver.geometry;
+
+import geometric_solver.math.Constraint;
 
 public class Line {
     double length;

@@ -1,4 +1,7 @@
-package geometric_solver;
+package geometric_solver.geometry;
+
+import geometric_solver.geometry.Axis;
+import geometric_solver.math.Constraint;
 
 public class Point {
 
@@ -41,19 +44,19 @@ public class Point {
             throw new IllegalArgumentException("Enumeration value of AXIS isn't presented");
     }
 
-    double getX() {
+    public double getX() {
         return x;
     }
 
-    void setX(double x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    double getY() {
+    public double getY() {
         return y;
     }
 
-    void setY(double y) {
+    public void setY(double y) {
         this.y = y;
     }
 }
