@@ -1,5 +1,9 @@
 package javafx;
 
+import geometric_solver.geometry.*;
+import geometric_solver.math.Lagrange;
+import geometric_solver.math.NewtonSolver;
+import geometric_solver.math.Source;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -11,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 
@@ -23,17 +28,24 @@ public class Controller {
     public Button lineButton;
     public Label sceneXCoord;
     public Label sceneYCoord;
+    public Label lagrangeLabel;
+    // Math
+    private Lagrange lagrange;
+    private Source source;
+    private NewtonSolver newtonSolver;
     private Pane root;
     private EventHandler<MouseEvent> onDragEvent;
     private EventHandler<MouseEvent> onPressedEvent;
     private EventHandler<MouseEvent> onMouseMoved;
     private EventHandler<MouseEvent> onCirclePressedEvent;
     private EventHandler<MouseEvent> onCircleDraggedEvent;
+    private EventHandler<MouseEvent> onCircleReleasedEvent;
     private boolean catchMouseCoordinates;
     private ArrayList<Shape> createdPoint;
     private ArrayList<Shape> boundPoints;
     private Line tempLineForLineVisualization;
     private ArrayList<Line> tempLineForRectangle;
+
 
     public void init(Pane pane) {
         root = pane;
@@ -41,6 +53,12 @@ public class Controller {
         createdPoint = new ArrayList<>();
         tempLineForRectangle = new ArrayList<>();
         boundPoints = new ArrayList<>();
+
+        // math init
+        source = new Source();
+        lagrange = new Lagrange(source);
+        newtonSolver = new NewtonSolver(lagrange, source);
+        //
 
         root.getScene().setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {
@@ -167,9 +185,18 @@ public class Controller {
         onCircleDraggedEvent = event -> {
             double ofsetX = event.getSceneX();
             double ofsetY = event.getSceneY();
+            double newPosX = ofsetX + oldPoint.x;
+            double newPosY = ofsetY + oldPoint.y;
             Circle c = ((Circle) event.getSource());
-            c.setCenterX(ofsetX + oldPoint.x);
-            c.setCenterY(ofsetY + oldPoint.y);
+            c.setCenterX(newPosX);
+            c.setCenterY(newPosY);
+        };
+
+        onCircleReleasedEvent = event -> {
+            Point point = (Point) event.getSource();
+            point.updateLagrangeComponents();
+            point.getLagrangeComponents();
+            lagrangeLabel.setText(lagrange.print());
         };
 
 
@@ -223,22 +250,15 @@ public class Controller {
         if (catchMouseCoordinates) {
             if (type == DrawingObjects.POINT) {
                 root.getScene().setOnMouseClicked((e) -> {
+
                     double xClick = e.getSceneX();
                     double yClick = e.getSceneY();
-                    Circle point = new Circle(xClick, yClick, R);
-
-                    point.setOnMouseEntered(((event) -> {
-                        Circle circle = (Circle) event.getSource();
-                        circle.setStroke(Color.RED);
-                    }));
-                    point.setOnMouseExited((event) -> {
-                        Circle circle = (Circle) event.getSource();
-                        circle.setStroke(Color.GREEN);
-                    });
-
-                    point.setOnMouseClicked(onCirclePressedEvent);
-                    point.setOnMouseDragged(onCircleDraggedEvent);
+                    // Circle point = new Circle(xClick, yClick, R);
+                    Point point = new Point(xClick, yClick);
+                    lagrange.addComponents(point.getLagrangeComponents());
+                    point.setOnMouseReleased(onCircleReleasedEvent);
                     root.getChildren().add(point);
+
                 });
             } else if (type == DrawingObjects.LINE) {
                 root.getScene().setOnMouseClicked((clickedEvent) -> {
@@ -258,10 +278,10 @@ public class Controller {
                         root.getChildren().add(tempLineForLineVisualization);
                     });
                     if (createdPoint.size() == 2) {
-                        Line line = new Line(((Circle) createdPoint.get(0)).getCenterX(), ((Circle) createdPoint.get(0)).getCenterY(), ((Circle) createdPoint.get(1)).getCenterX(), ((Circle) createdPoint.get(1)).getCenterY());
+                        geometric_solver.geometry.Line line = new geometric_solver.geometry.Line(((Circle) createdPoint.get(0)).getCenterX(), ((Circle) createdPoint.get(0)).getCenterY(), ((Circle) createdPoint.get(1)).getCenterX(), ((Circle) createdPoint.get(1)).getCenterY());
                         line.setStroke(Color.GREEN);
 
-
+                        /*
                         line.setOnMouseEntered(((event) -> {
                             Line tLine = (Line) event.getSource();
                             tLine.setStroke(Color.BLUE);
@@ -343,7 +363,9 @@ public class Controller {
                             line.setEndY(ofsetY + oldPoint.y);
 
                         }));
+                        */
 
+                        //lagrange.addComponents(line.getLagrangeComponents());
                         root.getChildren().add(line);
                         createdPoint.clear();
                         root.getScene().setOnMouseMoved(null);

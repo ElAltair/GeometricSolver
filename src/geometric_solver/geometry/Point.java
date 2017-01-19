@@ -1,64 +1,114 @@
 package geometric_solver.geometry;
 
-import geometric_solver.geometry.Axis;
-import geometric_solver.math.Constraint;
+import geometric_solver.math.*;
+import javafx.Pos;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 
-public class Point {
+import java.util.ArrayList;
 
-    private double x;
-    private double y;
+public class Point extends Circle {
+
+    private static Pos oldPoint;
+    private double size = 4.0;
+    private SquaredSumm squaredSummX;
+    private SquaredSumm squaredSummY;
+    private EventHandler<MouseEvent> dragEvent;
+    private EventHandler<MouseEvent> clickedEvent;
+    private EventHandler<MouseEvent> releaseEvent;
+    private ArrayList<SquaredSumm> lagrangeComponents;
 
     public Point(double x, double y) {
-        this.x = x;
-        this.y = y;
+        super(x, y, 4.0);
+
+        lagrangeComponents = new ArrayList<>();
+        squaredSummX = SquaredSumm.build(x);
+        squaredSummY = SquaredSumm.build(y);
+        lagrangeComponents.add(squaredSummX);
+        lagrangeComponents.add(squaredSummY);
+
+
+        oldPoint = new Pos();
+
+        clickedEvent = event -> {
+            Circle source = (Circle) event.getSource();
+            double nodeX = event.getX();
+            double nodeY = event.getY();
+            double deltaX = this.getScene().getX() - event.getSceneX();
+            double deltaY = this.getScene().getY() - event.getSceneY();
+            double pointPosX = 0.0;
+            double pointPosY = 0.0;
+
+            pointPosX = event.getSceneX() - ((Circle) event.getSource()).getCenterX();
+            pointPosY = event.getSceneY() - ((Circle) event.getSource()).getCenterY();
+            System.out.println("POINT");
+
+            oldPoint.setX(pointPosX);
+            oldPoint.setY(pointPosY);
+        };
+
+        dragEvent = event -> {
+            double ofsetX = event.getSceneX();
+            double ofsetY = event.getSceneY();
+            double newPosX = ofsetX + oldPoint.getX();
+            double newPosY = ofsetY + oldPoint.getY();
+            Circle c = ((Circle) event.getSource());
+            c.setCenterX(newPosX);
+            c.setCenterY(newPosY);
+        };
+
+        releaseEvent = event -> {
+            squaredSummX.setValue(getCenterX());
+            squaredSummX.setValue(getCenterY());
+        };
+
+        this.setOnMouseEntered(((event) -> {
+            Circle circle = (Circle) event.getSource();
+            circle.setStroke(Color.RED);
+        }));
+        this.setOnMouseExited((event) -> {
+            Circle circle = (Circle) event.getSource();
+            circle.setStroke(Color.GREEN);
+        });
+
+        activateDragging(true);
+
     }
 
-    /*
-    public static Constraint fullFix() {
-        return new Constraint();
+    public void move(double newX, double newY) {
+        this.setCenterX(newX);
+        this.setCenterY(newY);
+        squaredSummX = SquaredSumm.build(newX);
+        squaredSummY = SquaredSumm.build(newY);
     }
 
-    public static Constraint fixAxis(Axis axis) {
-        if (axis == Axis.AXIS_X)
-            return new Constraint();
-        else if (axis == Axis.AXIS_Y)
-            return new Constraint();
-        else if (axis == Axis.AXIS_Z)
-            return new Constraint();
+    public void activateDragging(boolean status) {
+        if (status) {
+            this.setOnMouseDragged(dragEvent);
+            this.setOnMouseClicked(clickedEvent);
+        }
         else
-            throw new IllegalArgumentException("Enumeration value of AXIS isn't presented");
-
+            this.setOnMouseDragged(null);
     }
-
-    public static Constraint fixAxises(Axis axis_one, Axis axis_two) {
-        if (axis_one == Axis.AXIS_X && axis_two == Axis.AXIS_X)
-            return new Constraint();
-        else
-            throw new IllegalArgumentException("Enumeration value of AXIS isn't presented");
-
-    }
-
-    public static Constraint fixAxises(Axis axis_one, Axis axis_two, Axis axis_three) {
-        if (axis_one == Axis.AXIS_X && axis_two == Axis.AXIS_X)
-            return new Constraint();
-        else
-            throw new IllegalArgumentException("Enumeration value of AXIS isn't presented");
-    }
-    */
 
     public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
+        return this.getCenterX();
     }
 
     public double getY() {
-        return y;
+        return this.getCenterY();
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public void updateLagrangeComponents() {
+        lagrangeComponents.get(0).setValue(getCenterX());
+        lagrangeComponents.get(1).setValue(getCenterY());
     }
+
+    public ArrayList<SquaredSumm> getLagrangeComponents() {
+        return lagrangeComponents;
+    }
+
 }

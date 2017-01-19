@@ -18,7 +18,7 @@ public class NewtonSolver {
     private Source solverSource;
     private Lagrange lagrange;
 
-    NewtonSolver(Lagrange lagrange, Source solverSource) {
+    public NewtonSolver(Lagrange lagrange, Source solverSource) {
         this.solverSource = solverSource;
         this.lagrange = lagrange;
         updateSolver();

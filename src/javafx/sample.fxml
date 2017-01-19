@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -7,7 +8,6 @@
 <Pane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" xmlns="http://javafx.com/javafx/8"
       fx:controller="javafx.Controller">
     <children>
-        <Label layoutX="14.0" layoutY="314.0" text="Scene:"/>
         <AnchorPane layoutY="339.0">
             <children>
                 <HBox alignment="CENTER" layoutY="16.0" nodeOrientation="LEFT_TO_RIGHT" spacing="20.0"/>
@@ -35,13 +35,20 @@
                 </GridPane>
             </children>
         </AnchorPane>
-        <Group>
+        <HBox layoutY="278.0" prefHeight="27.0" prefWidth="447.0">
             <children>
-                <Label layoutX="64.0" layoutY="314.0" text="X:"/>
-                <Label fx:id="sceneXCoord" layoutX="93.0" layoutY="314.0"/>
-                <Label layoutX="135.0" layoutY="314.0" text="Y:"/>
-                <Label fx:id="sceneYCoord" layoutX="164.0" layoutY="314.0"/>
+                <Label text="Scene:"/>
+                <Group>
+                    <children>
+                        <Label layoutX="64.0" layoutY="314.0" text="X:"/>
+                        <Label fx:id="sceneXCoord" layoutX="93.0" layoutY="314.0"/>
+                        <Label layoutX="135.0" layoutY="314.0" text="Y:"/>
+                        <Label fx:id="sceneYCoord" layoutX="164.0" layoutY="314.0"/>
+                    </children>
+                </Group>
             </children>
-        </Group>
+        </HBox>
+        <Label layoutX="10.0" layoutY="307.0" text="Lagrange:"/>
+        <Label fx:id="lagrangeLabel" layoutX="98.0" layoutY="306.0" prefHeight="17.0" prefWidth="475.0"/>
     </children>
 </Pane>
