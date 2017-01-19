@@ -15,10 +15,18 @@ public class SquaredSumm implements Differentiable {
     }
 
     @Override
-    public double diff(Variable var, Source source) {
-        if (this.var.equals(var))
-            return 2 * source.getValue(var) + 2 * constVar;
+    public double diff(Variable inputVar, Source inputSource) {
+        if (var.equals(inputVar))
+            return 2 * inputSource.getValue(var) + 2 * constVar;
         else
             return 0.0;
+    }
+
+    @Override
+    public double doubleDiff(Variable diffVar1, Variable diffVar2, Source inputSource) {
+        if (var.equals(diffVar1)) {
+            return diff(diffVar2, inputSource);
+        }
+        return 0.0;
     }
 }

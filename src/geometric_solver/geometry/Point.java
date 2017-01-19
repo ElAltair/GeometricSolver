@@ -13,6 +13,7 @@ public class Point {
         this.y = y;
     }
 
+    /*
     public static Constraint fullFix() {
         return new Constraint();
     }
@@ -43,6 +44,7 @@ public class Point {
         else
             throw new IllegalArgumentException("Enumeration value of AXIS isn't presented");
     }
+    */
 
     public double getX() {
         return x;

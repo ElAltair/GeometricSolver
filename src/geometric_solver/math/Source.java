@@ -21,7 +21,29 @@ public class Source {
         return -1.0;
     }
 
-    public void add(Variable var, Double value) {
+    public Variable getVariable(int varID) {
+        for (Variable it : variableList.keySet())
+            if (it.getId() == varID)
+                return it;
+        return null;
+    }
+
+    public Source add(Variable var, Double value) {
         variableList.put(var, value);
+        return this;
+    }
+
+    public int getSize() {
+        int size = 0;
+        for (Variable it : variableList.keySet()) {
+            size++;
+        }
+        return size;
+    }
+
+    public void update(double[] vector) {
+        for (int i = 0; i < variableList.size(); ++i) {
+            variableList.put(getVariable(i), vector[i]);
+        }
     }
 }

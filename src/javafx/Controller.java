@@ -14,8 +14,6 @@ import javafx.scene.shape.*;
 
 import java.util.ArrayList;
 
-
-
 public class Controller {
 
     private final double R = 3.0;

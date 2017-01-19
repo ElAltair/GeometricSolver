@@ -21,7 +21,9 @@ public class Line {
         length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
     }
 
+    /*
     public static Constraint fixLength(double value) {
         return new Constraint();
     }
+    */
 }

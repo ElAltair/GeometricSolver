@@ -1,7 +1,5 @@
 package geometric_solver.gaus;
 
-import java.util.ArrayList;
-
 public class Gaus {
     private static final double EPSILON = 1e-10;
 
@@ -102,6 +100,7 @@ public class Gaus {
     */
 
 
+    /*
     // javafx client
     public static void main(String[] args) {
         int N = 3;
@@ -119,6 +118,7 @@ public class Gaus {
         }
 
     }
+    */
 
 }
 
