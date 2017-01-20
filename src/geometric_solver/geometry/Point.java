@@ -1,18 +1,17 @@
 package geometric_solver.geometry;
 
-import geometric_solver.math.*;
+import geometric_solver.math.SquaredSumm;
 import javafx.Pos;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 
 public class Point extends Circle {
 
-    private static Pos oldPoint;
+    private Pos oldPoint;
     private double size = 4.0;
     private SquaredSumm squaredSummX;
     private SquaredSumm squaredSummY;
@@ -20,6 +19,10 @@ public class Point extends Circle {
     private EventHandler<MouseEvent> clickedEvent;
     private EventHandler<MouseEvent> releaseEvent;
     private ArrayList<SquaredSumm> lagrangeComponents;
+
+    public Pos getOldPoint() {
+        return oldPoint;
+    }
 
     public Point(double x, double y) {
         super(x, y, 4.0);
@@ -62,7 +65,7 @@ public class Point extends Circle {
 
         releaseEvent = event -> {
             squaredSummX.setValue(getCenterX());
-            squaredSummX.setValue(getCenterY());
+            squaredSummY.setValue(getCenterY());
         };
 
         this.setOnMouseEntered(((event) -> {

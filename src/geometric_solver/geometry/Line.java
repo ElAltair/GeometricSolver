@@ -13,6 +13,14 @@ public class Line extends javafx.scene.shape.Line {
     private Point p1;
     private Point p2;
 
+    public Point getP1() {
+        return p1;
+    }
+
+    public Point getP2() {
+        return p2;
+    }
+
     public Line(Point p1, Point p2) {
         super(p1.getX(), p1.getY(), p2.getX(), p2.getY());
         this.p1 = p1;
@@ -27,6 +35,39 @@ public class Line extends javafx.scene.shape.Line {
         this.setOnMouseExited((event) -> {
             Line tLine = (Line) event.getSource();
             tLine.setStroke(Color.GREEN);
+        });
+
+
+        this.getP1().setOnMouseDragged(event -> {
+            double ofsetX = event.getSceneX();
+            double ofsetY = event.getSceneY();
+            double newPosX = ofsetX + p1.getOldPoint().getX();
+            double newPosY = ofsetY + p1.getOldPoint().getY();
+            Circle c = ((Circle) event.getSource());
+            c.setCenterX(newPosX);
+            c.setCenterY(newPosY);
+
+            length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
+            this.setStartX(p1.getX());
+            this.setEndX(p2.getX());
+            this.setStartY(p1.getY());
+            this.setEndY(p2.getY());
+        });
+
+        this.getP2().setOnMouseDragged(event -> {
+            double ofsetX = event.getSceneX();
+            double ofsetY = event.getSceneY();
+            double newPosX = ofsetX + p2.getOldPoint().getX();
+            double newPosY = ofsetY + p2.getOldPoint().getY();
+            Circle c = ((Circle) event.getSource());
+            c.setCenterX(newPosX);
+            c.setCenterY(newPosY);
+
+            length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
+            this.setStartX(p1.getX());
+            this.setEndX(p2.getX());
+            this.setStartY(p1.getY());
+            this.setEndY(p2.getY());
         });
     }
 

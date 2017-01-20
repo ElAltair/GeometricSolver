@@ -1,7 +1,7 @@
 package javafx;
 
 public enum DrawingObjects {
-    RECTANGLE,
+    //RECTANGLE,
     POINT,
     LINE,
     NONE
