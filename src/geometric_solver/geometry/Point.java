@@ -77,6 +77,9 @@ public class Point extends Circle {
             Circle circle = (Circle) event.getSource();
             circle.setStroke(Color.GREEN);
         });
+        this.setOnContextMenuRequested(event -> {
+            System.out.println("Context shit");
+        });
 
         activateDragging(true);
 

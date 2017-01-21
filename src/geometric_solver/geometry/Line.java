@@ -70,6 +70,10 @@ public class Line extends javafx.scene.shape.Line {
             this.setStartY(p1.getY());
             this.setEndY(p2.getY());
         });
+
+        this.setOnContextMenuRequested(event -> {
+            System.out.println("Context shit");
+        });
     }
 
     public Line(double x1, double y1, double x2, double y2) {

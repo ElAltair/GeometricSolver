@@ -62,6 +62,8 @@ public class Controller {
         newtonSolver = new NewtonSolver(lagrange, source);
         //
 
+        drawGrid(50, root);
+
         root.getScene().setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {
                 catchMouseCoordinates = false;
@@ -259,6 +261,9 @@ public class Controller {
                     double yClick = e.getSceneY();
                     // Circle point = new Circle(xClick, yClick, R);
                     Point point = new Point(xClick, yClick);
+                    point.setOnContextMenuRequested(event -> {
+                        new PointContextMenu().show(point, event.getScreenX(), event.getScreenY());
+                    });
                     lagrange.addComponents(point.getLagrangeComponents());
                     point.setOnMouseReleased(onCircleReleasedEvent);
                     root.getChildren().add(point);
@@ -508,6 +513,27 @@ public class Controller {
 //                });
 //
 //            }*/
+    }
+
+    public void clearAll(ActionEvent actionEvent) {
+        root.getChildren().removeIf(elem -> elem instanceof Point || elem instanceof Line);
+        init(root);
+        lagrangeLabel.setText("");
+    }
+
+    public void drawGrid(Integer density, Pane buttons) {
+        ArrayList<Line> lines = new ArrayList<>();
+        for (int i = 0; i < 700; i += density) {
+            Line line1 = new Line(i, 0, i, 300);
+            line1.setStroke(Color.LIGHTGRAY);
+            lines.add(line1);
+        }
+        for (int i = 0; i < 350; i += density) {
+            Line line2 = new Line(0, i, 700, i);
+            line2.setStroke(Color.LIGHTGRAY);
+            lines.add(line2);
+        }
+        buttons.getChildren().addAll(lines);
     }
 
     static class Pos {

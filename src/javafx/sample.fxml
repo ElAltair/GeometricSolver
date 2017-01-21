@@ -27,7 +27,7 @@
                     <children>
                         <Button fx:id="lineButton" mnemonicParsing="false" onAction="#createLine" text="Line" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                         <Button fx:id="pointButton" mnemonicParsing="false" onAction="#createPoint" text="Point" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                        <Button fx:id="clearButton" mnemonicParsing="false" text="Clear" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAll" text="Clear" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin></Button>
