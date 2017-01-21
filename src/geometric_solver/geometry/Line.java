@@ -2,7 +2,7 @@ package geometric_solver.geometry;
 
 import geometric_solver.math.Constraint;
 import geometric_solver.math.Differentiable;
-import geometric_solver.math.SquaredSumm;
+import geometric_solver.math.SquaredDiff;
 import geometric_solver.math.constraints.FixLength;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -13,14 +13,6 @@ public class Line extends javafx.scene.shape.Line {
     private double length;
     private Point p1;
     private Point p2;
-
-    public Point getP1() {
-        return p1;
-    }
-
-    public Point getP2() {
-        return p2;
-    }
 
     public Line(Point p1, Point p2) {
         super(p1.getX(), p1.getY(), p2.getX(), p2.getY());
@@ -92,9 +84,16 @@ public class Line extends javafx.scene.shape.Line {
         });
     }
 
-
     public static Constraint fixLength(double value) {
         return new FixLength();
+    }
+
+    public Point getP1() {
+        return p1;
+    }
+
+    public Point getP2() {
+        return p2;
     }
 
     public ArrayList<Differentiable> getLagrangeComponents() {

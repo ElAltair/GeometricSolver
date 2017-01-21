@@ -36,17 +36,17 @@ public class NewtonSolver {
         builder = new MatrixBuilder(dimension, lagrange, solverSource);
     }
 
-    public ArrayList<Double> solve() {
+    public void solve() {
 
         updateSolver();
-
-        while (getMaxX(vectorX) < epsilon) {
+        do {
             HesseMatrix = builder.createMatrixA();
             resultVector = builder.createVectorB();
             vectorX = Gaus.solve(HesseMatrix, resultVector);
+            System.out.println("After GAUS");
+            Arrays.stream(vectorX).forEach((elem) -> System.out.println(elem));
             solverSource.update(vectorX);
         }
-        List<Double> list = Arrays.stream(vectorX).boxed().collect(Collectors.toList());
-        return new ArrayList<>(list);
+        while (getMaxX(vectorX) > epsilon);
     }
 }

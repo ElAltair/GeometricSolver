@@ -8,47 +8,66 @@ import geometric_solver.math.VariableType;
 
 public class FixAxis extends Constraint {
 
-    Axis fixAxisCoordinate;
-    double value;
-    Variable lambda;
-    Variable x;
+    private Axis fixAxisCoordinate;
+    private double value;
+    private Variable lambda;
+    private Variable var;
 
-    public FixAxis(Axis fixAxisCoordinate, double value) {
+    public FixAxis(Axis fixAxisCoordinate, double value, Variable var) {
         this.fixAxisCoordinate = fixAxisCoordinate;
         this.value = value;
+        this.var = var;
         this.lambda = new Variable(Variable.generateID(VariableType.LAMBDA), VariableType.LAMBDA);
-        this.x = new Variable(Variable.generateID(VariableType.X), VariableType.X);
     }
 
 
     @Override
     public double diff(Variable inputVar, Source inputSource) {
-        if (x.equals(inputVar))
-            return inputSource.getValue(x);
+        // diff X in formula
+        if (var.equals(inputVar))
+            return inputSource.getValue(lambda);
+            // diff Lambda in formula
+        else if (lambda.equals(inputVar))
+            return inputSource.getValue(var) - value;
         else
             return 0.0;
     }
 
     @Override
     public double doubleDiff(Variable diffVar1, Variable diffVar2, Source inputSource) {
-        if (x.equals(diffVar1)) {
-            return diff(diffVar2, inputSource);
-        }
-        return 0.0;
+        if (var.equals(diffVar1) && lambda.equals(diffVar2)) {
+            return 1.0;
+        } else if (lambda.equals(diffVar1) && var.equals(diffVar2))
+            return 1.0;
+        else
+            return 0.0;
     }
 
     @Override
     public String toString() {
-        return "( " + x.getType().name() + " - " + value + ")" + " * " + lambda.getType().name();
+        return lambda.getType().name() + lambda.getId() + " * ( " + var.getType().name() + var.getId() + " - " + value + ")";
     }
 
     @Override
-    public  void setValue(double newConstVar){    }
+    public Variable getVariable() {
+        return lambda;
+    }
 
     @Override
-    public Variable getVariableType() {
-        return x; };
+    public double getValue() {
+        return value;
+    }
 
     @Override
-    public double getVariableValue() {return value;}
+    public void setValue(double newConstVar) {
+    }
+
+    public Axis getAxis() {
+        return fixAxisCoordinate;
+    }
+
+    @Override
+    public double getStartVarValue() {
+        return 0.0;
+    }
 }

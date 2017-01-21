@@ -17,31 +17,37 @@ public class Lagrange {
     public void addComponents(ArrayList<Differentiable> pointComponenst) {
         for (Differentiable it : pointComponenst) {
             functonParts.add(it);
-            source.add(it.getVariableType(),it.getVariableValue());
+            source.add(it.getVariable(), it.getStartVarValue());
         }
     }
 
+    //TODO remove? need to think
+    /*
     public void addComponentsAxis(Differentiable axisComponenst) {
         functonParts.add(axisComponenst);
-        source.add(axisComponenst.getVariableType(),axisComponenst.getVariableValue());
+        source.add(axisComponenst.getVariable(),axisComponenst.getValue());
 
     }
+    */
 
+    // TODO remove? need to think
+    /*
     public void changePosition(double pointValueX, double pointValueY) {
         Variable pointVarX = new Variable(Variable.generateID(VariableType.X), VariableType.X);
-        SquaredSumm squaredX = new SquaredSumm(pointVarX, pointValueX);
+        SquaredDiff squaredX = new SquaredDiff(pointVarX, pointValueX);
         source.add(pointVarX, pointValueX);
         functonParts.add(squaredX);
 
         Variable pointVarY = new Variable(Variable.generateID(VariableType.X), VariableType.X);
-        SquaredSumm squaredY = new SquaredSumm(pointVarY, pointValueY);
+        SquaredDiff squaredY = new SquaredDiff(pointVarY, pointValueY);
         source.add(pointVarY, pointValueY);
         functonParts.add(squaredY);
     }
+    */
 
     public Lagrange addConstraint(Constraint constraint) {
-
         functonParts.add(constraint);
+        source.add(constraint.getVariable(), 0.0);
         return this;
     }
 

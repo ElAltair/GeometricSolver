@@ -5,8 +5,6 @@ import geometric_solver.math.Source;
 import geometric_solver.math.Variable;
 import geometric_solver.math.VariableType;
 
-import java.time.temporal.ValueRange;
-
 public class FixLength extends Constraint {
 
     @Override
@@ -20,14 +18,21 @@ public class FixLength extends Constraint {
     }
 
     @Override
-    public void setValue(double newConstVar){    }
-
-    @Override
-    public Variable getVariableType() {
-        Variable var = new Variable(1, VariableType.X);
-        return var;
+    public Variable getVariable() {
+        return new Variable(1, VariableType.X);
     }
 
     @Override
-    public double getVariableValue() {return 0.0;}
+    public double getValue() {
+        return 0.0;
+    }
+
+    @Override
+    public void setValue(double newConstVar) {
+    }
+
+    @Override
+    public double getStartVarValue() {
+        return 0.0;
+    }
 }

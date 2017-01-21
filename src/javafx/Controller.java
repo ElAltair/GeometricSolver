@@ -1,10 +1,7 @@
 package javafx;
 
 import geometric_solver.geometry.*;
-import geometric_solver.math.Lagrange;
-import geometric_solver.math.MatrixBuilder;
-import geometric_solver.math.NewtonSolver;
-import geometric_solver.math.Source;
+import geometric_solver.math.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -47,6 +44,8 @@ public class Controller {
     private ArrayList<Shape> boundPoints;
     private Line tempLineForLineVisualization;
     private ArrayList<Line> tempLineForRectangle;
+
+    private ArrayList<Double> solvedVariables;
 
 
     public void init(Pane pane) {
@@ -199,10 +198,9 @@ public class Controller {
         onCircleReleasedEvent = event -> {
             Point point = (Point) event.getSource();
             point.updateLagrangeComponents();
-            point.getLagrangeComponents();
             lagrangeLabel.setText(lagrange.print());
             MatrixBuilder testMatrix = new MatrixBuilder(lagrange.getSize(), lagrange, source);
-            testMatrix.generateAndPrint();
+            newtonSolver.solve();
         };
 
 
@@ -265,7 +263,7 @@ public class Controller {
                         new PointContextMenu().show(point, event.getScreenX(), event.getScreenY());
                     });
                     lagrange.addComponents(point.getLagrangeComponents());
-                    point.setOnMouseReleased(onCircleReleasedEvent);
+                    point.onMouseRelease(onCircleReleasedEvent);
                     root.getChildren().add(point);
 
                 });
@@ -289,8 +287,13 @@ public class Controller {
                     if (createdPoint.size() == 2) {
                         //Point point2 = new Point(((Circle) createdPoint.get(1)).getCenterX(), ((Circle) createdPoint.get(1)).getCenterY());
                         //root.getChildren().add(point2);
-                        geometric_solver.geometry.Line line = new geometric_solver.geometry.Line((Point)createdPoint.get(0), (Point)createdPoint.get(1));
-                        line.setStroke(Color.GREEN);
+
+                        // TODO UNCOMMENT AFTER LINE CHANGES
+                        // geometric_solver.geometry.Line line = new geometric_solver.geometry.Line(((Point)createdPoint.get(0)), (Point)createdPoint.get(1));
+
+
+                        //TODO UNCOMMENT AFTER LINE CHANGES
+                        //line.setStroke(Color.GREEN);
 
 
 //                        line.setOnMouseEntered(((event) -> {
@@ -378,7 +381,8 @@ public class Controller {
 
                         //lagrange.addComponents(line.getLagrangeComponents());
 
-                        root.getChildren().add(line);
+                        //TODO UNCOMMENT AFTER LINE CHANGES
+                        // root.getChildren().add(line);
                         createdPoint.clear();
                         root.getScene().setOnMouseMoved(null);
                     }

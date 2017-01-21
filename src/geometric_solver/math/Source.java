@@ -1,13 +1,14 @@
 package geometric_solver.math;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Source {
-    private Map<Variable, Double> variableList;
+    private LinkedHashMap<Variable, Double> variableList;
 
     public Source() {
-        variableList = new HashMap<>();
+        variableList = new LinkedHashMap<>();
     }
 
     public Double getValue(Variable var) {
@@ -19,6 +20,17 @@ public class Source {
             if (var.getId() == varID)
                 return variableList.get(var);
         return -1.0;
+    }
+
+    public void setVariable(Variable var, double value) {
+        variableList.put(var, value);
+    }
+
+    public Variable getVariable(int varID, VariableType type) {
+        for (Variable it : variableList.keySet())
+            if (it.getId() == varID && it.getType() == type)
+                return it;
+        return null;
     }
 
     public Variable getVariable(int varID) {
@@ -42,8 +54,21 @@ public class Source {
     }
 
     public void update(double[] vector) {
-        for (int i = 0; i < variableList.size(); ++i) {
-            variableList.put(getVariable(i), vector[i]);
+        int i = 0;
+        for (Variable it : variableList.keySet()) {
+            variableList.put(it, variableList.get(it) + vector[i]);
+            ++i;
+        }
+    }
+
+    public LinkedHashMap<Variable, Double> getVariables() {
+        return variableList;
+    }
+
+    public void print() {
+        System.out.println("Source: ");
+        for (Variable it : variableList.keySet()) {
+            System.out.println(it.getType().name() + it.getId() + " " + variableList.get(it));
         }
     }
 }

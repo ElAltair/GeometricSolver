@@ -1,41 +1,47 @@
 package geometric_solver.geometry;
 
+import geometric_solver.math.Constraint;
 import geometric_solver.math.Differentiable;
-import geometric_solver.math.SquaredSumm;
+import geometric_solver.math.SquaredDiff;
+import geometric_solver.math.constraints.FixAxis;
 import javafx.Pos;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 
 public class Point extends Circle {
 
+    private final double size = 4.0;
     private Pos oldPoint;
-    private double size = 4.0;
-    private SquaredSumm squaredSummX;
-    private SquaredSumm squaredSummY;
+    private SquaredDiff squaredSummX;
+    private SquaredDiff squaredSummY;
     private EventHandler<MouseEvent> dragEvent;
     private EventHandler<MouseEvent> clickedEvent;
     private EventHandler<MouseEvent> releaseEvent;
     private ArrayList<Differentiable> lagrangeComponents;
 
-    public Pos getOldPoint() {
-        return oldPoint;
-    }
+    private double startVaueX;
+    private double startVaueY;
 
     public Point(double x, double y) {
         super(x, y, 4.0);
-
         lagrangeComponents = new ArrayList<>();
-        squaredSummX = SquaredSumm.build(x);
-        squaredSummY = SquaredSumm.build(y);
+
+        oldPoint = new Pos();
+
+        //squaredSummX = SquaredDiff.build(x, oldPoint.getX());
+        //squaredSummY = SquaredDiff.build(y, oldPoint.getY());
+        // TODO ONLY FOR FUCKING DEBUG PURPOSE! REMOVE THIS HARDCODE
+        squaredSummX = SquaredDiff.build(x, 199.0);
+        squaredSummY = SquaredDiff.build(y, 152.0);
         lagrangeComponents.add(squaredSummX);
         lagrangeComponents.add(squaredSummY);
 
 
-        oldPoint = new Pos();
 
         clickedEvent = event -> {
             Circle source = (Circle) event.getSource();
@@ -65,8 +71,8 @@ public class Point extends Circle {
         };
 
         releaseEvent = event -> {
-            squaredSummX.setValue(getCenterX());
-            squaredSummY.setValue(getCenterY());
+            squaredSummX.setValue(this.getCenterX());
+            squaredSummY.setValue(this.getCenterY());
         };
 
         this.setOnMouseEntered(((event) -> {
@@ -85,20 +91,43 @@ public class Point extends Circle {
 
     }
 
+    public Pos getOldPoint() {
+        return oldPoint;
+    }
+
+    public void setOldPoint(Pos oldPos) {
+        oldPoint = oldPos;
+    }
+
+    /*
     public void move(double newX, double newY) {
-        this.setCenterX(newX);
-        this.setCenterY(newY);
-        squaredSummX = SquaredSumm.build(newX);
-        squaredSummY = SquaredSumm.build(newY);
+        visualizationObject.setCenterX(newX);
+        visualizationObject.setCenterY(newY);
+        squaredSummX = SquaredDiff.build(newX);
+        squaredSummY = SquaredDiff.build(newY);
+    }
+    */
+
+    public Constraint fixAxis(Axis fixAxis, double value) {
+        if (fixAxis == Axis.AXIS_X)
+            return new FixAxis(fixAxis, value, squaredSummX.getVariable());
+        else if (fixAxis == Axis.AXIS_Y)
+            return new FixAxis(fixAxis, value, squaredSummY.getVariable());
+        else
+            throw new IllegalArgumentException("Can't create constraint - FixAxis, for point "
+                    + this.toString() + "wrong axis");
     }
 
     public void activateDragging(boolean status) {
         if (status) {
             this.setOnMouseDragged(dragEvent);
             this.setOnMouseClicked(clickedEvent);
-        }
-        else
+        } else
             this.setOnMouseDragged(null);
+    }
+
+    public void onMouseRelease(EventHandler<MouseEvent> event) {
+        this.setOnMouseReleased(event);
     }
 
     public double getX() {
@@ -110,8 +139,8 @@ public class Point extends Circle {
     }
 
     public void updateLagrangeComponents() {
-        lagrangeComponents.get(0).setValue(getCenterX());
-        lagrangeComponents.get(1).setValue(getCenterY());
+        lagrangeComponents.get(0).setValue(this.getCenterX());
+        lagrangeComponents.get(1).setValue(this.getCenterY());
     }
 
     public ArrayList<Differentiable> getLagrangeComponents() {
