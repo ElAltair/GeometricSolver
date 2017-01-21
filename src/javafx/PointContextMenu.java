@@ -1,5 +1,7 @@
 package javafx;
 
+import geometric_solver.geometry.Point;
+import geometric_solver.math.Lagrange;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -9,8 +11,10 @@ import javafx.scene.control.MenuItem;
  */
 public class PointContextMenu extends ContextMenu {
 
+
     PointContextMenu() {
         super();
+
         initMenuItems();
     }
 
@@ -23,7 +27,6 @@ public class PointContextMenu extends ContextMenu {
             System.out.println("Fix full!");
         });
         fixAxis.setOnAction(event -> {
-            System.out.println("Fix distance!");
         });
         fixAxis.setOnAction(event -> {
             System.out.println("Fix axis!");

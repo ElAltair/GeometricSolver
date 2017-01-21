@@ -51,6 +51,13 @@ public class Lagrange {
         return this;
     }
 
+    public void addConstraint(ArrayList<Constraint> constraintList) {
+        for (Constraint it : constraintList) {
+            functonParts.add(it);
+            source.add(it.getVariable(), 0.0);
+        }
+    }
+
     public double diff(Variable var, Source source) {
         return functonParts.stream().mapToDouble((part) -> part.diff(var, source)).sum();
     }
