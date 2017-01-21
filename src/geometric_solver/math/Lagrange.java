@@ -1,12 +1,18 @@
 package geometric_solver.math;
 
 import geometric_solver.math.constraints.FixAxis;
+import javafx.scene.control.*;
 
 import java.util.ArrayList;
 
 public class Lagrange {
     private ArrayList<Differentiable> functonParts;
     private Source source;
+    private Label lagrangeLabel;
+
+    public void setLagrangeLabel(Label lagrangeLabel) {
+        this.lagrangeLabel = lagrangeLabel;
+    }
 
     public Lagrange(Source source) {
         functonParts = new ArrayList<>();
@@ -72,6 +78,10 @@ public class Lagrange {
             fullString += it.toString() + " + ";
         }
         return fullString;
+    }
+
+    public void updateLabel() {
+        lagrangeLabel.setText(this.print());
     }
 
     public int getSize() {

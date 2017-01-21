@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -30,6 +31,7 @@ public class Controller {
     public Label sceneXCoord;
     public Label sceneYCoord;
     public Label lagrangeLabel;
+    public TextField constraintValue;
     // Math
     private Lagrange lagrange;
     private Source source;
@@ -60,6 +62,7 @@ public class Controller {
         // math init
         source = new Source();
         lagrange = new Lagrange(source);
+        lagrange.setLagrangeLabel(lagrangeLabel);
         newtonSolver = new NewtonSolver(lagrange, source);
         //
 
@@ -261,7 +264,8 @@ public class Controller {
                     double yClick = e.getSceneY();
                     // Circle point = new Circle(xClick, yClick, R);
                     Point point = new Point(xClick, yClick);
-
+                    point.setLagrange(lagrange);
+                    point.setConstraintValue(constraintValue);
                     lagrange.addComponents(point.getLagrangeComponents());
                     point.onMouseRelease(onCircleReleasedEvent);
                     root.getChildren().add(point);

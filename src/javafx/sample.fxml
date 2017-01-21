@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.*?>
@@ -59,6 +60,7 @@
                </children>
             </GridPane>
               <Label id="LagrangeFunc" fx:id="lagrangeLabel" layoutX="270.0" layoutY="50.0" prefHeight="50.0" prefWidth="430.0" />
+            <TextField fx:id="constraintValue" layoutX="14.0" layoutY="14.0" />
          </children>
       </AnchorPane>
     </children>
