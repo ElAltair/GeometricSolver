@@ -37,4 +37,16 @@ public class Variable {
         return type;
     }
 
+    public void removeVariable(VariableType type) {
+        if (type == VariableType.X)
+            XgenerateiD--;
+        else
+            LgenerateiD--;
+    }
+
+    @Override
+    public String toString() {
+        return getType().name() + id;
+    }
+
 }
