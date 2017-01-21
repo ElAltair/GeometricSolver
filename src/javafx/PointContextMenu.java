@@ -4,12 +4,18 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Created by Laiserg on 21.01.2017.
  */
 public class PointContextMenu extends ContextMenu {
 
-    PointContextMenu() {
+    public HashMap<String, MenuItem> menuItems = new HashMap<>();
+
+    public PointContextMenu() {
         super();
         initMenuItems();
     }
@@ -19,15 +25,9 @@ public class PointContextMenu extends ContextMenu {
         MenuItem fixAxis = new MenuItem("Fix point to axis");
         MenuItem fixDistanceToPoint = new MenuItem("Fix distance to point");
 
-        fixFull.setOnAction(event -> {
-            System.out.println("Fix full!");
-        });
-        fixAxis.setOnAction(event -> {
-            System.out.println("Fix distance!");
-        });
-        fixAxis.setOnAction(event -> {
-            System.out.println("Fix axis!");
-        });
+        menuItems.put("fixAxis", fixAxis);
+        menuItems.put("fixFull", fixFull);
+        menuItems.put("fixDistanceToPoint", fixDistanceToPoint);
         this.getItems().addAll(fixAxis, fixFull, fixDistanceToPoint);
     }
 

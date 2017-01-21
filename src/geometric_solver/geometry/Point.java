@@ -4,8 +4,12 @@ import geometric_solver.math.Constraint;
 import geometric_solver.math.Differentiable;
 import geometric_solver.math.SquaredDiff;
 import geometric_solver.math.constraints.FixAxis;
+import javafx.PointContextMenu;
 import javafx.Pos;
 import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -13,12 +17,15 @@ import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 
+import static java.awt.SystemColor.menu;
+
 public class Point extends Circle {
 
     private final double size = 4.0;
     private Pos oldPoint;
     private SquaredDiff squaredSummX;
     private SquaredDiff squaredSummY;
+    private PointContextMenu pointContextMenu;
     private EventHandler<MouseEvent> dragEvent;
     private EventHandler<MouseEvent> clickedEvent;
     private EventHandler<MouseEvent> releaseEvent;
@@ -30,7 +37,7 @@ public class Point extends Circle {
     public Point(double x, double y) {
         super(x, y, 4.0);
         lagrangeComponents = new ArrayList<>();
-
+        PointContextMenu pointContextMenu = new PointContextMenu();
         oldPoint = new Pos();
 
         //squaredSummX = SquaredDiff.build(x, oldPoint.getX());
@@ -83,8 +90,29 @@ public class Point extends Circle {
             Circle circle = (Circle) event.getSource();
             circle.setStroke(Color.GREEN);
         });
+
         this.setOnContextMenuRequested(event -> {
-            System.out.println("Context shit");
+            pointContextMenu.menuItems.get("fixFull").setOnAction(menuClicked -> {
+                this.fixAxis(Axis.AXIS_X, getCenterX());
+                this.fixAxis(Axis.AXIS_Y, getCenterY());
+                System.out.println("Fixed coords!");
+            });
+            pointContextMenu.menuItems.get("fixAxis").setOnAction(menuClicked -> {
+                ContextMenu fixAxisContextMenu = new ContextMenu();
+                MenuItem fixY = new MenuItem("Fix Y");
+                MenuItem fixX = new MenuItem("Fix X");
+                fixY.setOnAction(innerMenuClickedY -> {
+                    this.fixAxis(Axis.AXIS_Y, getCenterY());
+                    System.out.println("Fixed Y!");
+                });
+                fixX.setOnAction(innerMenuClickedX -> {
+                    this.fixAxis(Axis.AXIS_X, getCenterX());
+                    System.out.println("Fixed X!");
+                });
+                fixAxisContextMenu.getItems().addAll(fixX, fixY);
+                fixAxisContextMenu.show(this, event.getScreenX(), event.getScreenY());
+            });
+            pointContextMenu.show(this, event.getScreenX(), event.getScreenY());
         });
 
         activateDragging(true);

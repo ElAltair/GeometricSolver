@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
@@ -15,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.shape.Line;
 
+import javax.naming.Context;
 import java.util.ArrayList;
 
 public class Controller {
@@ -259,9 +261,7 @@ public class Controller {
                     double yClick = e.getSceneY();
                     // Circle point = new Circle(xClick, yClick, R);
                     Point point = new Point(xClick, yClick);
-                    point.setOnContextMenuRequested(event -> {
-                        new PointContextMenu().show(point, event.getScreenX(), event.getScreenY());
-                    });
+
                     lagrange.addComponents(point.getLagrangeComponents());
                     point.onMouseRelease(onCircleReleasedEvent);
                     root.getChildren().add(point);
