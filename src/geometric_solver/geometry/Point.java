@@ -31,6 +31,8 @@ public class Point extends Circle {
     private EventHandler<MouseEvent> releaseEvent;
     private ArrayList<Differentiable> lagrangeComponents;
 
+    private ArrayList<Constraint> pointConstraints;
+
     private double startVaueX;
     private double startVaueY;
 
@@ -38,6 +40,8 @@ public class Point extends Circle {
         super(x, y, 4.0);
         lagrangeComponents = new ArrayList<>();
         PointContextMenu pointContextMenu = new PointContextMenu();
+        pointConstraints = new ArrayList<>();
+
         oldPoint = new Pos();
 
         //squaredSummX = SquaredDiff.build(x, oldPoint.getX());
@@ -136,14 +140,18 @@ public class Point extends Circle {
     }
     */
 
-    public Constraint fixAxis(Axis fixAxis, double value) {
+    public void fixAxis(Axis fixAxis, double value) {
         if (fixAxis == Axis.AXIS_X)
-            return new FixAxis(fixAxis, value, squaredSummX.getVariable());
+            pointConstraints.add(new FixAxis(fixAxis, value, squaredSummX.getVariable()));
         else if (fixAxis == Axis.AXIS_Y)
-            return new FixAxis(fixAxis, value, squaredSummY.getVariable());
+            pointConstraints.add(new FixAxis(fixAxis, value, squaredSummY.getVariable()));
         else
             throw new IllegalArgumentException("Can't create constraint - FixAxis, for point "
                     + this.toString() + "wrong axis");
+    }
+
+    public ArrayList<Constraint> getConstrains() {
+        return pointConstraints;
     }
 
     public void activateDragging(boolean status) {
