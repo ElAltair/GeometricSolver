@@ -8,13 +8,21 @@ import geometric_solver.math.constraints.FixAxis;
 import javafx.PointContextMenu;
 import javafx.Pos;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.VPos;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 
@@ -32,7 +40,6 @@ public class Point extends Circle {
     private EventHandler<MouseEvent> releaseEvent;
     private ArrayList<Differentiable> lagrangeComponents;
     private Lagrange lagrange;
-    private TextField constraintValue;
 
     public void setLagrange(Lagrange lagrange) {
         this.lagrange = lagrange;
@@ -58,7 +65,6 @@ public class Point extends Circle {
         squaredSummY = SquaredDiff.build(y, 152.0);
         lagrangeComponents.add(squaredSummX);
         lagrangeComponents.add(squaredSummY);
-
 
 
         clickedEvent = event -> {
@@ -123,37 +129,91 @@ public class Point extends Circle {
                         lagrange.updateLabel();
                     });
                     enterValue.setOnAction(enterValueEvent -> {
-//                        AnchorPane anchorPane = new AnchorPane();
-//                        anchorPane.setPrefHeight(50);
-//                        anchorPane.setPrefWidth(170);
-//                        GridPane gridPane = new GridPane();
-//                        anchorPane.getChildren().add(gridPane);
-//                        TextField constraintValue = new TextField();
-//                        constraintValue.setPrefWidth(100);
-//                        gridPane.add(constraintValue, 0, 0);
-//                        ButtonType submitValue = new ButtonType("Submit");
-//                        submitValue.setPrefWidth(70);
-//                        gridPane.add(submitValue, 1, 0);
-//                        constraintValue.setEditable(true);
-//                        submitValue.setOnAction(event1 -> {
-//                            System.out.println("Entered: " + constraintValue.getText());
-//                        });
-//                        Dialog<String> dialog = new Dialog<String>();
-//                        ButtonType submitValue = new ButtonType("Submit", ButtonBar.ButtonData.APPLY);
-//                        dialog.getDialogPane().getChildren().add(new TextField());
-//                        dialog.getDialogPane().getButtonTypes().add(submitValue);
-                            this.fixAxis(Axis.AXIS_Y, new Double(getConstraintValue().getText()));
-                            System.out.println("Fixed Y : " + new Double(getConstraintValue().getText()) + "!");
-                            lagrange.updateLabel();
+
+                        Stage dialog = new Stage();
+                        dialog.setWidth(230);
+                        dialog.setHeight(70);
+                        dialog.initStyle(StageStyle.UTILITY);
+                        TextField value = new TextField();
+                        value.setPrefWidth(160);
+                        value.setPadding(new Insets(10, 10, 10, 10));
+                        value.setText("Enter your value");
+                        Button submitValue = new Button("Submit");
+                        submitValue.setPrefWidth(70);
+                        submitValue.setPadding(new Insets(10, 10, 10, 10));
+                        submitValue.setAlignment(javafx.geometry.Pos.CENTER);
+                        submitValue.setOnAction(submit -> {
+                            try {
+                                this.fixAxis(Axis.AXIS_Y, new Double(value.getText()));
+                                System.out.println("Fixed Y with:" + new Double(value.getText()));
+                                dialog.close();
+                                lagrange.updateLabel();
+                            } catch (Exception e) {
+                                value.setText("WRONG VALUE");
+                            }
+                        });
+                        GridPane gridPane = new GridPane();
+                        gridPane.add(value, 0, 0);
+                        gridPane.setPrefWidth(300);
+                        gridPane.setPrefHeight(100);
+                        gridPane.add(submitValue, 1, 0);
+                        Scene scene = new Scene(gridPane);
+                        dialog.setScene(scene);
+                        dialog.setTitle("Enter value for constraint");
+                        dialog.show();
+
                     });
                     axisMenu.getItems().addAll(enterValue, chooseCurrent);
                     axisMenu.show(this, event.getScreenX(), event.getScreenY());
 
                 });
-                fixX.setOnAction(innerMenuClickedX -> {
-                    this.fixAxis(Axis.AXIS_X, getCenterX());
-                    System.out.println("Fixed X!");
-                    lagrange.updateLabel();
+                fixX.setOnAction(innerMenuClickedY -> {
+                    ContextMenu axisMenu = new ContextMenu();
+                    MenuItem enterValue = new MenuItem("Enter Value");
+                    MenuItem chooseCurrent = new MenuItem("Choose Current");
+                    chooseCurrent.setOnAction(chooseCurrentEvent -> {
+                        this.fixAxis(Axis.AXIS_X, getCenterX());
+                        System.out.println("Fixed Current X!");
+                        lagrange.updateLabel();
+                    });
+                    enterValue.setOnAction(enterValueEvent -> {
+
+                        Stage dialog = new Stage();
+                        dialog.setWidth(230);
+                        dialog.setHeight(70);
+                        dialog.initStyle(StageStyle.UTILITY);
+                        TextField value = new TextField();
+                        value.setPrefWidth(160);
+                        value.setPadding(new Insets(10, 10, 10, 10));
+                        value.setText("Enter your value");
+                        Button submitValue = new Button("Submit");
+                        submitValue.setPrefWidth(70);
+                        submitValue.setPadding(new Insets(10, 10, 10, 10));
+                        submitValue.setAlignment(javafx.geometry.Pos.CENTER);
+                        submitValue.setOnAction(submit -> {
+                            try {
+                                this.fixAxis(Axis.AXIS_X, new Double(value.getText()));
+                                System.out.println("Fixed X with:" + new Double(value.getText()));
+                                dialog.close();
+                                lagrange.updateLabel();
+                            } catch (Exception e) {
+                                value.setText("WRONG VALUE");
+                            }
+                        });
+                        GridPane gridPane = new GridPane();
+                        gridPane.add(value, 0, 0);
+                        gridPane.setPrefWidth(300);
+                        gridPane.setPrefHeight(100);
+                        gridPane.add(submitValue, 1, 0);
+                        Scene scene = new Scene(gridPane);
+                        dialog.setScene(scene);
+                        dialog.setTitle("Enter value for constraint");
+                        dialog.show();
+
+                    });
+                    axisMenu.getItems().addAll(enterValue, chooseCurrent);
+                    axisMenu.show(this, event.getScreenX(), event.getScreenY());
+
                 });
                 fixAxisContextMenu.getItems().addAll(fixX, fixY);
                 fixAxisContextMenu.show(this, event.getScreenX(), event.getScreenY());
@@ -225,11 +285,4 @@ public class Point extends Circle {
         return lagrangeComponents;
     }
 
-    public void setConstraintValue(TextField constraintValue) {
-        this.constraintValue = constraintValue;
-    }
-
-    public TextField getConstraintValue() {
-        return constraintValue;
-    }
 }

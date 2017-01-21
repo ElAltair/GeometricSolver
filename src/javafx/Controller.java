@@ -31,7 +31,6 @@ public class Controller {
     public Label sceneXCoord;
     public Label sceneYCoord;
     public Label lagrangeLabel;
-    public TextField constraintValue;
     // Math
     private Lagrange lagrange;
     private Source source;
@@ -265,7 +264,6 @@ public class Controller {
                     // Circle point = new Circle(xClick, yClick, R);
                     Point point = new Point(xClick, yClick);
                     point.setLagrange(lagrange);
-                    point.setConstraintValue(constraintValue);
                     lagrange.addComponents(point.getLagrangeComponents());
                     point.onMouseRelease(onCircleReleasedEvent);
                     root.getChildren().add(point);
