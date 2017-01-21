@@ -2,6 +2,7 @@ package javafx;
 
 import geometric_solver.geometry.*;
 import geometric_solver.math.Lagrange;
+import geometric_solver.math.MatrixBuilder;
 import geometric_solver.math.NewtonSolver;
 import geometric_solver.math.Source;
 import javafx.event.ActionEvent;
@@ -198,6 +199,8 @@ public class Controller {
             point.updateLagrangeComponents();
             point.getLagrangeComponents();
             lagrangeLabel.setText(lagrange.print());
+            MatrixBuilder testMatrix = new MatrixBuilder(lagrange.getSize(), lagrange, source);
+            testMatrix.generateAndPrint();
         };
 
 

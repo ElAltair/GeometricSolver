@@ -1,5 +1,6 @@
 package geometric_solver.geometry;
 
+import geometric_solver.math.Differentiable;
 import geometric_solver.math.SquaredSumm;
 import javafx.Pos;
 import javafx.event.EventHandler;
@@ -18,7 +19,7 @@ public class Point extends Circle {
     private EventHandler<MouseEvent> dragEvent;
     private EventHandler<MouseEvent> clickedEvent;
     private EventHandler<MouseEvent> releaseEvent;
-    private ArrayList<SquaredSumm> lagrangeComponents;
+    private ArrayList<Differentiable> lagrangeComponents;
 
     public Pos getOldPoint() {
         return oldPoint;
@@ -110,7 +111,7 @@ public class Point extends Circle {
         lagrangeComponents.get(1).setValue(getCenterY());
     }
 
-    public ArrayList<SquaredSumm> getLagrangeComponents() {
+    public ArrayList<Differentiable> getLagrangeComponents() {
         return lagrangeComponents;
     }
 

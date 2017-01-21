@@ -1,6 +1,7 @@
 package geometric_solver.geometry;
 
 import geometric_solver.math.Constraint;
+import geometric_solver.math.Differentiable;
 import geometric_solver.math.SquaredSumm;
 import geometric_solver.math.constraints.FixLength;
 import javafx.scene.paint.Color;
@@ -92,8 +93,8 @@ public class Line extends javafx.scene.shape.Line {
         return new FixLength();
     }
 
-    public ArrayList<SquaredSumm> getLagrangeComponents() {
-        ArrayList<SquaredSumm> returnArray = new ArrayList<>();
+    public ArrayList<Differentiable> getLagrangeComponents() {
+        ArrayList<Differentiable> returnArray = new ArrayList<>();
         returnArray.addAll(p1.getLagrangeComponents());
         returnArray.addAll(p2.getLagrangeComponents());
         return returnArray;

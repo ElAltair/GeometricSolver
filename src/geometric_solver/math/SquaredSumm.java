@@ -18,6 +18,7 @@ public class SquaredSumm implements Differentiable {
         return new SquaredSumm(new Variable(Variable.generateID(VariableType.X), VariableType.X), constVar);
     }
 
+    @Override
     public void setValue(double newConstVar) {
         this.constVar = newConstVar;
     }
@@ -41,5 +42,15 @@ public class SquaredSumm implements Differentiable {
     @Override
     public String toString() {
         return "( " + var.getType().name() + " - " + constVar + ") ^ 2";
+    }
+
+    @Override
+    public double getVariableValue() {
+        return constVar;
+    }
+
+    @Override
+    public Variable getVariableType() {
+        return var;
     }
 }
