@@ -6,10 +6,7 @@ import javafx.LineContextMenu;
 import javafx.Pos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -17,6 +14,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import javax.naming.Context;
 import java.util.ArrayList;
 
 public class Line extends javafx.scene.shape.Line {
@@ -164,8 +162,63 @@ public class Line extends javafx.scene.shape.Line {
                 lengthMenu.getItems().addAll(enterValue, chooseCurrent);
                 lengthMenu.show(this, event.getScreenX(), event.getScreenY());
             });
+            lineContextMenu.menuItems.get("fixAngle").setOnAction(event1 -> {
+                ContextMenu angleMenu = new ContextMenu();
+                MenuItem horizontal = new MenuItem("Horizontal");
+                MenuItem vertical = new MenuItem("Vertical");
+                MenuItem choose = new MenuItem("Choose angle");
+
+                horizontal.setOnAction(event2 -> {
+                    this.fixAngle(90);
+                    System.out.println("Fixed horizontal!");
+                });
+                vertical.setOnAction(event2 -> {
+                    this.fixAngle(0);
+                    System.out.println("Fixed vertical!");
+                });
+                choose.setOnAction(event2 -> {
+                    Stage dialog = new Stage();
+                    dialog.setWidth(230);
+                    dialog.setHeight(70);
+                    dialog.initStyle(StageStyle.UTILITY);
+                    TextField value = new TextField();
+                    value.setPrefWidth(160);
+                    value.setPadding(new Insets(10, 10, 10, 10));
+                    value.setText("Enter your value");
+                    Button submitValue = new Button("Submit");
+                    submitValue.setPrefWidth(70);
+                    submitValue.setPadding(new Insets(10, 10, 10, 10));
+                    submitValue.setAlignment(javafx.geometry.Pos.CENTER);
+                    submitValue.setOnAction(submit -> {
+                        try {
+                            this.fixAngle(new Double(value.getText()));
+                            System.out.println("Fixed line angle with:" + new Double(value.getText()));
+                            dialog.close();
+                            lagrange.updateLabel();
+                        } catch (Exception e) {
+                            value.setText("WRONG VALUE");
+                        }
+                    });
+                    GridPane gridPane = new GridPane();
+                    gridPane.add(value, 0, 0);
+                    gridPane.setPrefWidth(300);
+                    gridPane.setPrefHeight(100);
+                    gridPane.add(submitValue, 1, 0);
+                    Scene scene = new Scene(gridPane);
+                    dialog.setScene(scene);
+                    dialog.setTitle("Enter value for constraint");
+                    dialog.show();
+                });
+
+                angleMenu.getItems().addAll(horizontal, vertical, choose);
+                angleMenu.show(this, event.getScreenX(), event.getScreenY());
+            });
             lineContextMenu.show(this, event.getScreenX(), event.getScreenY());
         });
+    }
+
+    public void fixAngle(double angle) {
+        //TODO Констрейнт на угол angle - значение в ГРАДУСАХ
     }
 
 
