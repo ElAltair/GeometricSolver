@@ -60,6 +60,7 @@ public class FixAxis extends Constraint {
 
     @Override
     public void setValue(double newConstVar) {
+        this.value = newConstVar;
     }
 
     public Axis getAxis() {
