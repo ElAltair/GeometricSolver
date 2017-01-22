@@ -280,6 +280,8 @@ public class Line extends javafx.scene.shape.Line {
                 p2.getSquaredSummX().getVariable(), p2.getSquaredSummY().getVariable(), value);
         lineConstraints.add(fixLength);
         lagrange.addConstraint(fixLength);
+        newtonSolver.solve();
+        updateObjectOnScene();
     }
 
     public Point getP1() {
