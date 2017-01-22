@@ -1,8 +1,6 @@
 package geometric_solver.geometry;
 
-import geometric_solver.math.Constraint;
-import geometric_solver.math.Differentiable;
-import geometric_solver.math.Lagrange;
+import geometric_solver.math.*;
 import geometric_solver.math.constraints.FixLength;
 import javafx.LineContextMenu;
 import javafx.Pos;
@@ -13,6 +11,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -26,6 +25,9 @@ public class Line extends javafx.scene.shape.Line {
     private Point p2;
     private LineContextMenu lineContextMenu;
     private Lagrange lagrange;
+    private Pane root;
+    private NewtonSolver newtonSolver;
+    private Source source;
 
     public Line(Point p1, Point p2) {
         super(p1.getX(), p1.getY(), p2.getX(), p2.getY());
@@ -42,13 +44,14 @@ public class Line extends javafx.scene.shape.Line {
 
 
         this.getP1().setOnMouseDragged(event -> {
-            double offsetX = event.getSceneX();
-            double offsetY = event.getSceneY();
-            double newPosX = offsetX + p1.getOldPoint().getX();
-            double newPosY = offsetY + p1.getOldPoint().getY();
-            Circle c = ((Circle) event.getSource());
-            c.setCenterX(newPosX);
-            c.setCenterY(newPosY);
+            double ofsetX = event.getSceneX();
+            double ofsetY = event.getSceneY();
+            double newPosX = ofsetX + p2.getOldPoint().getX();
+            double newPosY = ofsetY + p2.getOldPoint().getY();
+            Point point = (Point) event.getSource();
+            point.updateLagrangeComponents(newPosX, newPosY);
+            newtonSolver.solve();
+            updateObjectOnScene();
 
             length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
             this.setStartX(p1.getX());
@@ -62,9 +65,10 @@ public class Line extends javafx.scene.shape.Line {
             double ofsetY = event.getSceneY();
             double newPosX = ofsetX + p2.getOldPoint().getX();
             double newPosY = ofsetY + p2.getOldPoint().getY();
-            Circle c = ((Circle) event.getSource());
-            c.setCenterX(newPosX);
-            c.setCenterY(newPosY);
+            Point point = (Point) event.getSource();
+            point.updateLagrangeComponents(newPosX, newPosY);
+            newtonSolver.solve();
+            updateObjectOnScene();
 
             length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
             this.setStartX(p1.getX());
@@ -95,14 +99,12 @@ public class Line extends javafx.scene.shape.Line {
             p1.setCenterY(this.getStartY());
             p2.setCenterX(this.getEndX());
             p2.setCenterY(this.getEndY());
+            p1.updateLagrangeComponents(p1.getCenterX(), p1.getCenterY());
+            p2.updateLagrangeComponents(p2.getCenterX(), p2.getCenterY());
+            newtonSolver.solve();
+            updateObjectOnScene();
             oldEvent.setX(event.getSceneX());
             oldEvent.setY(event.getSceneY());
-        });
-        this.setOnDragExited(event -> {
-            p1.setCenterX(this.getStartX());
-            p1.setCenterY(this.getStartY());
-            p2.setCenterX(this.getEndX());
-            p2.setCenterY(this.getEndY());
         });
 
         this.setOnContextMenuRequested(event -> {
@@ -137,21 +139,6 @@ public class Line extends javafx.scene.shape.Line {
         });
     }
 
-    public Line(double x1, double y1, double x2, double y2) {
-        super(x1, y1, x2, y2);
-        Point p1 = new Point(x1, y1);
-        Point p2 = new Point(x2, y2);
-        length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
-
-        this.setOnMouseEntered(((event) -> {
-            Line tLine = (Line) event.getSource();
-            tLine.setStroke(Color.BLUE);
-        }));
-        this.setOnMouseExited((event) -> {
-            Line tLine = (Line) event.getSource();
-            tLine.setStroke(Color.GREEN);
-        });
-    }
 
     public static Constraint fixLength(double value) {
         return new FixLength();
@@ -181,6 +168,48 @@ public class Line extends javafx.scene.shape.Line {
     }
 
 
+    public void setRoot(Pane root) {
+        this.root = root;
+    }
 
+    public Pane getRoot() {
+        return root;
+    }
 
+    public void setNewtonSolver(NewtonSolver newtonSolver) {
+        this.newtonSolver = newtonSolver;
+    }
+
+    public NewtonSolver getNewtonSolver() {
+        return newtonSolver;
+    }
+
+    private void updateObjectOnScene() {
+        root.getChildren().stream().filter((elem) -> elem instanceof Point).forEach((elem) -> {
+            Point point = (Point) elem;
+            point.setCenterX(source.getValue(point.getSquaredSummX().getVariable()));
+            point.setCenterY(source.getValue(point.getSquaredSummY().getVariable()));
+            source.setVariable(point.getSquaredSummX().getVariable(), point.getX());
+            source.setVariable(point.getSquaredSummY().getVariable(), point.getY());
+        });
+        root.getChildren().stream().filter((elem) -> elem instanceof Line).forEach((elem) -> {
+            Line line = (Line) elem;
+            line.setStartX((source.getValue(p1.getSquaredSummX().getVariable())));
+            line.setStartY((source.getValue(p1.getSquaredSummY().getVariable())));
+            line.setEndX((source.getValue(p2.getSquaredSummX().getVariable())));
+            line.setEndY((source.getValue(p2.getSquaredSummY().getVariable())));
+            source.setVariable(p1.getSquaredSummX().getVariable(), p1.getX());
+            source.setVariable(p1.getSquaredSummY().getVariable(), p1.getY());
+            source.setVariable(p2.getSquaredSummX().getVariable(), p2.getX());
+            source.setVariable(p2.getSquaredSummY().getVariable(), p2.getY());
+        });
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
+    public Source getSource() {
+        return source;
+    }
 }
