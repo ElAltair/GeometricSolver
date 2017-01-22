@@ -41,8 +41,28 @@ public class NewtonSolver {
         updateSolver();
         do {
             HesseMatrix = builder.createMatrixA();
+            /*
+            solverSource.print();
+            System.out.println("Matrix A: ");
+            for(int i =0 ; i < dimension; ++i) {
+                for (int j = 0; j < dimension; ++j) {
+                    System.out.print(HesseMatrix[i][j] + " ");
+                }
+                System.out.println();
+            }
+            System.out.println("Vector R: ");
+            for(int i =0 ; i < dimension; ++i) {
+                    System.out.println(resultVector[i]);
+            }
+            System.out.println();
+            */
             resultVector = builder.createVectorB();
             vectorX = Gaus.solve(HesseMatrix, resultVector);
+            /*
+            for(int i =0 ; i < dimension; ++i) {
+                System.out.println(vectorX[i]);
+            }
+            System.out.println("-------------------------");
             /*
             System.out.println("After GAUS");
             Arrays.stream(vectorX).forEach((elem) -> System.out.println(elem));

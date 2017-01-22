@@ -47,7 +47,7 @@ public class Point extends Circle {
         PointContextMenu pointContextMenu = new PointContextMenu();
         pointConstraints = new ArrayList<>();
 
-        oldPoint = new Pos();
+        oldPoint = new Pos(x, y);
 
         //squaredSummX = SquaredDiff.build(x, oldPoint.getX());
         //squaredSummY = SquaredDiff.build(y, oldPoint.getY());
@@ -81,12 +81,15 @@ public class Point extends Circle {
         });
 
         this.setOnMouseDragged(event -> {
+            /*
             double ofsetX = event.getSceneX();
             double ofsetY = event.getSceneY();
             double newPosX = ofsetX + oldPoint.getX();
             double newPosY = ofsetY + oldPoint.getY();
+            */
             Point point = (Point) event.getSource();
-            point.updateLagrangeComponents(newPosX, newPosY);
+            //point.updateLagrangeComponents(newPosX, newPosY);
+            point.updateLagrangeComponents(event.getSceneX(), event.getSceneY());
             newtonSolver.solve();
             updateObjectOnScene();
         });
@@ -346,27 +349,27 @@ public class Point extends Circle {
         });
     }
 
-    public void setNewtonSolver(NewtonSolver newtonSolver) {
-        this.newtonSolver = newtonSolver;
-    }
-
     public NewtonSolver getNewtonSolver() {
         return newtonSolver;
     }
 
-    public void setSource(Source source) {
-        this.source = source;
+    public void setNewtonSolver(NewtonSolver newtonSolver) {
+        this.newtonSolver = newtonSolver;
     }
 
     public Source getSource() {
         return source;
     }
 
-    public void setRoot(Pane root) {
-        this.root = root;
+    public void setSource(Source source) {
+        this.source = source;
     }
 
     public Pane getRoot() {
         return root;
+    }
+
+    public void setRoot(Pane root) {
+        this.root = root;
     }
 }
