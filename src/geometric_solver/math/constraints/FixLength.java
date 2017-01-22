@@ -24,12 +24,58 @@ public class FixLength extends Constraint {
 
     @Override
     public double diff(Variable var, Source source) {
-        return 0.0;
+        if (xStart.equals(var)) {
+            return -2 * source.getValue(lambda) * source.getValue(xEnd) +
+                    2 * source.getValue(xStart) * source.getValue(lambda);
+        } else if (xEnd.equals(var)) {
+            return 2 * source.getValue(xEnd) * source.getValue(lambda) -
+                    2 * source.getValue(lambda) * source.getValue(xStart);
+        } else if (yStart.equals(var)) {
+            return -2 * source.getValue(lambda) * source.getValue(yEnd) +
+                    2 * source.getValue(yStart) * source.getValue(lambda);
+        } else if (yEnd.equals(var)) {
+            return 2 * source.getValue(yEnd) * source.getValue(lambda) -
+                    2 * source.getValue(lambda) * source.getValue(yStart);
+        } else
+            return 0.0;
     }
 
     @Override
     public double doubleDiff(Variable varOne, Variable varTwo, Source source) {
-        return 0.0;
+        if (xStart.equals(varOne)) {
+            if (xStart.equals(varTwo)) {
+                return 2 * source.getValue(lambda);
+            } else if (xEnd.equals(varTwo)) {
+                return -2 * source.getValue(lambda);
+            } else if (lambda.equals(varTwo)) {
+                return -2 * source.getValue(xEnd) + 2 * source.getValue(xStart);
+            } else return 0.0;
+        } else if (xEnd.equals(varOne)) {
+            if (xStart.equals(varTwo)) {
+                return -2 * source.getValue(lambda);
+            } else if (xEnd.equals(varTwo)) {
+                return 2 * source.getValue(lambda);
+            } else if (lambda.equals(varTwo)) {
+                return 2 * source.getValue(xEnd) - 2 * source.getValue(xStart);
+            } else return 0.0;
+        } else if (yStart.equals(varOne)) {
+            if (yStart.equals(varTwo)) {
+                return 2 * source.getValue(lambda);
+            } else if (yEnd.equals(varTwo)) {
+                return -2 * source.getValue(lambda);
+            } else if (lambda.equals(varTwo)) {
+                return -2 * source.getValue(yEnd) + 2 * source.getValue(yStart);
+            } else
+                return 0.0;
+        } else if (yEnd.equals(varOne)) {
+            if (yStart.equals(varTwo)) {
+                return -2 * source.getValue(lambda);
+            } else if (yEnd.equals(varTwo)) {
+                return 2 * source.getValue(lambda);
+            } else if (lambda.equals(varTwo)) {
+                return 2 * source.getValue(yEnd) - 2 * source.getValue(yStart);
+            } else return 0.0;
+        } else return 0.0;
     }
 
     @Override
