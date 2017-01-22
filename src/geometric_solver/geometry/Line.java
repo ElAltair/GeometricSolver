@@ -151,4 +151,8 @@ public class Line extends javafx.scene.shape.Line {
     public void setLagrange(Lagrange lagrange) {
         this.lagrange = lagrange;
     }
+
+    public void dump() {
+
+    }
 }
