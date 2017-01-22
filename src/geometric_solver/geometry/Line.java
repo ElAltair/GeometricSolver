@@ -53,12 +53,7 @@ public class Line extends javafx.scene.shape.Line {
             point.updateLagrangeComponents(newPosX, newPosY);
             newtonSolver.solve();
             updateObjectOnScene();
-
             length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
-            this.setStartX(p1.getX());
-            this.setEndX(p2.getX());
-            this.setStartY(p1.getY());
-            this.setEndY(p2.getY());
         });
 
         this.getP2().setOnMouseDragged(event -> {
@@ -70,12 +65,7 @@ public class Line extends javafx.scene.shape.Line {
             point.updateLagrangeComponents(newPosX, newPosY);
             newtonSolver.solve();
             updateObjectOnScene();
-
             length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
-            this.setStartX(p1.getX());
-            this.setEndX(p2.getX());
-            this.setStartY(p1.getY());
-            this.setEndY(p2.getY());
         });
 
         Pos oldEvent = new Pos(0, 0);
@@ -92,16 +82,8 @@ public class Line extends javafx.scene.shape.Line {
             double offsetY = event.getSceneY() - (oldEvent.getY() == 0 ? event.getSceneY() : oldEvent.getY());
 
             length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
-            this.setStartX(this.getStartX() + offsetX);
-            this.setEndX(this.getEndX() + offsetX);
-            this.setStartY(this.getStartY() + offsetY);
-            this.setEndY(this.getEndY() + offsetY);
-            p1.setCenterX(this.getStartX());
-            p1.setCenterY(this.getStartY());
-            p2.setCenterX(this.getEndX());
-            p2.setCenterY(this.getEndY());
-            p1.updateLagrangeComponents(p1.getCenterX(), p1.getCenterY());
-            p2.updateLagrangeComponents(p2.getCenterX(), p2.getCenterY());
+            p1.updateLagrangeComponents(this.getStartX() + offsetX, this.getStartY() + offsetY);
+            p2.updateLagrangeComponents(this.getEndX() + offsetX, this.getEndY() + offsetY);
             newtonSolver.solve();
             updateObjectOnScene();
             oldEvent.setX(event.getSceneX());
@@ -197,14 +179,14 @@ public class Line extends javafx.scene.shape.Line {
         });
         root.getChildren().stream().filter((elem) -> elem instanceof Line).forEach((elem) -> {
             Line line = (Line) elem;
-            line.setStartX((source.getValue(p1.getSquaredSummX().getVariable())));
-            line.setStartY((source.getValue(p1.getSquaredSummY().getVariable())));
-            line.setEndX((source.getValue(p2.getSquaredSummX().getVariable())));
-            line.setEndY((source.getValue(p2.getSquaredSummY().getVariable())));
-            source.setVariable(p1.getSquaredSummX().getVariable(), p1.getX());
-            source.setVariable(p1.getSquaredSummY().getVariable(), p1.getY());
-            source.setVariable(p2.getSquaredSummX().getVariable(), p2.getX());
-            source.setVariable(p2.getSquaredSummY().getVariable(), p2.getY());
+            line.setStartX((source.getValue(line.getP1().getSquaredSummX().getVariable())));
+            line.setStartY((source.getValue(line.getP1().getSquaredSummY().getVariable())));
+            line.setEndX((source.getValue(line.getP2().getSquaredSummX().getVariable())));
+            line.setEndY((source.getValue(line.getP2().getSquaredSummY().getVariable())));
+            source.setVariable(line.getP1().getSquaredSummX().getVariable(), line.getP1().getX());
+            source.setVariable(line.getP1().getSquaredSummY().getVariable(), line.getP1().getY());
+            source.setVariable(line.getP2().getSquaredSummX().getVariable(), line.getP2().getX());
+            source.setVariable(line.getP2().getSquaredSummY().getVariable(), line.getP2().getY());
         });
     }
 

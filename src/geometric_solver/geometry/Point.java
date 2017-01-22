@@ -1,9 +1,6 @@
 package geometric_solver.geometry;
 
-import geometric_solver.math.Constraint;
-import geometric_solver.math.Differentiable;
-import geometric_solver.math.Lagrange;
-import geometric_solver.math.SquaredDiff;
+import geometric_solver.math.*;
 import geometric_solver.math.constraints.FixAxis;
 import javafx.PointContextMenu;
 import javafx.Pos;
@@ -13,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -35,6 +33,9 @@ public class Point extends Circle {
     private ArrayList<Constraint> pointConstraints;
     private double startVaueX;
     private double startVaueY;
+    private NewtonSolver newtonSolver;
+    private Source source;
+    private Pane root;
 
     public Point(double x, double y) {
         super(x, y, 4.0);
@@ -75,15 +76,16 @@ public class Point extends Circle {
             setOldPoint(new Pos(event.getSceneX() - this.getCenterX(), event.getSceneY() - this.getCenterY()));
         });
 
-        dragEvent = event -> {
+        this.setOnMouseDragged(event -> {
             double ofsetX = event.getSceneX();
             double ofsetY = event.getSceneY();
             double newPosX = ofsetX + oldPoint.getX();
             double newPosY = ofsetY + oldPoint.getY();
-            Circle c = ((Circle) event.getSource());
-            c.setCenterX(newPosX);
-            c.setCenterY(newPosY);
-        };
+            Point point = (Point) event.getSource();
+            point.updateLagrangeComponents(newPosX, newPosY);
+            newtonSolver.solve();
+            updateObjectOnScene();
+        });
 
         releaseEvent = event -> {
             squaredSummX.setValue(this.getCenterX());
@@ -302,5 +304,39 @@ public class Point extends Circle {
 
     public SquaredDiff getSquaredSummY() {
         return squaredSummY;
+    }
+
+    private void updateObjectOnScene() {
+        root.getChildren().stream().filter((elem) -> elem instanceof Point).forEach((elem) -> {
+            Point point = (Point) elem;
+            point.setCenterX(source.getValue(point.getSquaredSummX().getVariable()));
+            point.setCenterY(source.getValue(point.getSquaredSummY().getVariable()));
+            source.setVariable(point.getSquaredSummX().getVariable(), point.getX());
+            source.setVariable(point.getSquaredSummY().getVariable(), point.getY());
+        });
+    }
+
+    public void setNewtonSolver(NewtonSolver newtonSolver) {
+        this.newtonSolver = newtonSolver;
+    }
+
+    public NewtonSolver getNewtonSolver() {
+        return newtonSolver;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setRoot(Pane root) {
+        this.root = root;
+    }
+
+    public Pane getRoot() {
+        return root;
     }
 }
