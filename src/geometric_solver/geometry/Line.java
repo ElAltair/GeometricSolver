@@ -221,13 +221,13 @@ public class Line extends javafx.scene.shape.Line {
             });
             lineContextMenu.menuItems.get("fixParallel").setOnAction(event1 -> {
                 root.getChildren().stream().filter(node -> node instanceof Line).forEach(node -> {
-                    ((Line) node).setOnMouseClicked(click -> {
+                    node.setOnMouseClicked(click -> {
                         Line l2 = (Line) click.getSource();
                         this.fixParallel(this, l2);
                         System.out.println("paralleled!");
                         /** Вернуться к обычной обработке*/
                         root.getChildren().stream().filter(elem -> elem instanceof Line).forEach(elem -> {
-                            ((Line) elem).setOnMouseClicked(event2 -> {
+                            elem.setOnMouseClicked(event2 -> {
 
                                 //nothing
 
@@ -362,6 +362,9 @@ public class Line extends javafx.scene.shape.Line {
             point.setCenterY(source.getValue(point.getSquaredSummY().getVariable()));
             source.setVariable(point.getSquaredSummX().getVariable(), point.getX());
             source.setVariable(point.getSquaredSummY().getVariable(), point.getY());
+            for (Differentiable diff : point.getConstrains()) {
+                source.setVariable(diff.getVariable(), 0.0);
+            }
         });
         root.getChildren().stream().filter((elem) -> elem instanceof Line).forEach((elem) -> {
             Line line = (Line) elem;
@@ -374,6 +377,12 @@ public class Line extends javafx.scene.shape.Line {
             source.setVariable(line.getP1().getSquaredSummY().getVariable(), line.getP1().getY());
             source.setVariable(line.getP2().getSquaredSummX().getVariable(), line.getP2().getX());
             source.setVariable(line.getP2().getSquaredSummY().getVariable(), line.getP2().getY());
+            for (Differentiable diff : line.getP1().getConstrains()) {
+                source.setVariable(diff.getVariable(), 0.0);
+            }
+            for (Differentiable diff : line.getP2().getConstrains()) {
+                source.setVariable(diff.getVariable(), 0.0);
+            }
         });
     }
 

@@ -320,7 +320,7 @@ public class Point extends Circle {
     private void fixDistance(Point p1, Point p2, Double value) {
         FixLength fixLength = new FixLength(p1.getSquaredSummX().getVariable(), p1.getSquaredSummY().getVariable(),
                 p2.getSquaredSummX().getVariable(), p2.getSquaredSummY().getVariable(), value);
-        this.pointConstraints.add(fixLength);
+        p1.pointConstraints.add(fixLength);
         p2.pointConstraints.add(fixLength);
         root.getChildren().stream().filter(node -> node instanceof Line).forEach(elem -> {
             Line line = (Line) elem;
