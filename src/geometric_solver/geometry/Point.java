@@ -217,37 +217,48 @@ public class Point extends Circle {
                 root.getChildren().stream().filter(node -> node instanceof Point).forEach(node -> {
                     ((Point) node).setOnMouseClicked(click -> {
                         Point p2 = (Point) click.getSource();
-                        Stage dialog = new Stage();
-                        dialog.setWidth(230);
-                        dialog.setHeight(70);
-                        dialog.initStyle(StageStyle.UTILITY);
-                        TextField value = new TextField();
-                        value.setPrefWidth(160);
-                        value.setPadding(new Insets(10, 10, 10, 10));
-                        value.setText("Enter your value");
-                        Button submitValue = new Button("Submit");
-                        submitValue.setPrefWidth(70);
-                        submitValue.setPadding(new Insets(10, 10, 10, 10));
-                        submitValue.setAlignment(javafx.geometry.Pos.CENTER);
-                        submitValue.setOnAction(submit -> {
-                            try {
-                                this.fixDistance(this, p2, new Double(value.getText()));
-                                System.out.println("Fixed distance with:" + new Double(value.getText()));
-                                dialog.close();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                value.setText("WRONG VALUE");
-                            }
+                        ContextMenu distanceMenu = new ContextMenu();
+                        MenuItem enterValue = new MenuItem("Enter Value");
+                        MenuItem chooseCurrent = new MenuItem("Choose Current");
+                        chooseCurrent.setOnAction(chooseCurrentEvent -> {
+                            this.fixDistance(this, p2, Math.sqrt(Math.pow(Math.abs(this.getX() - p2.getX()), 2) + Math.pow(Math.abs(this.getY() - p2.getY()), 2)));
+                            System.out.println("Fixed Current distance!");
                         });
-                        GridPane gridPane = new GridPane();
-                        gridPane.add(value, 0, 0);
-                        gridPane.setPrefWidth(300);
-                        gridPane.setPrefHeight(100);
-                        gridPane.add(submitValue, 1, 0);
-                        Scene scene = new Scene(gridPane);
-                        dialog.setScene(scene);
-                        dialog.setTitle("Enter value for constraint");
-                        dialog.show();
+                        enterValue.setOnAction(enterValueEvent -> {
+                                    Stage dialog = new Stage();
+                                    dialog.setWidth(230);
+                                    dialog.setHeight(70);
+                                    dialog.initStyle(StageStyle.UTILITY);
+                                    TextField value = new TextField();
+                                    value.setPrefWidth(160);
+                                    value.setPadding(new Insets(10, 10, 10, 10));
+                                    value.setText("Enter your value");
+                                    Button submitValue = new Button("Submit");
+                                    submitValue.setPrefWidth(70);
+                                    submitValue.setPadding(new Insets(10, 10, 10, 10));
+                                    submitValue.setAlignment(javafx.geometry.Pos.CENTER);
+                                    submitValue.setOnAction(submit -> {
+                                        try {
+                                            this.fixDistance(this, p2, new Double(value.getText()));
+                                            System.out.println("Fixed distance with:" + new Double(value.getText()));
+                                            dialog.close();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            value.setText("WRONG VALUE");
+                                        }
+                                    });
+                                    GridPane gridPane = new GridPane();
+                                    gridPane.add(value, 0, 0);
+                                    gridPane.setPrefWidth(300);
+                                    gridPane.setPrefHeight(100);
+                                    gridPane.add(submitValue, 1, 0);
+                                    Scene scene = new Scene(gridPane);
+                                    dialog.setScene(scene);
+                                    dialog.setTitle("Enter value for constraint");
+                                    dialog.show();
+                                });
+                        distanceMenu.getItems().addAll(enterValue, chooseCurrent);
+                        distanceMenu.show(this, click.getScreenX(), click.getScreenY());
                         /** Вернуться к обычной обработке*/
                         root.getChildren().stream().filter(elem -> elem instanceof Point).forEach(elem -> {
                             ((Point) elem).setOnMouseClicked(event2 -> {
@@ -309,8 +320,12 @@ public class Point extends Circle {
     private void fixDistance(Point p1, Point p2, Double value) {
         FixLength fixLength = new FixLength(p1.getSquaredSummX().getVariable(), p1.getSquaredSummY().getVariable(),
                 p2.getSquaredSummX().getVariable(), p2.getSquaredSummY().getVariable(), value);
-        //this.pointConstraints.add(fixLength);
-        //p2.pointConstraints.add(fixLength);
+        this.pointConstraints.add(fixLength);
+        p2.pointConstraints.add(fixLength);
+        root.getChildren().stream().filter(node -> node instanceof Line).forEach(elem -> {
+            Line line = (Line) elem;
+            line.lengthRecalc();
+        });
         lagrange.addConstraint(fixLength);
         newtonSolver.solve();
         updateObjectOnScene();
@@ -411,6 +426,7 @@ public class Point extends Circle {
             line.setStartY((source.getValue(line.getP1().getSquaredSummY().getVariable())));
             line.setEndX((source.getValue(line.getP2().getSquaredSummX().getVariable())));
             line.setEndY((source.getValue(line.getP2().getSquaredSummY().getVariable())));
+            line.lengthRecalc();
             source.setVariable(line.getP1().getSquaredSummX().getVariable(), line.getP1().getX());
             source.setVariable(line.getP1().getSquaredSummY().getVariable(), line.getP1().getY());
             source.setVariable(line.getP2().getSquaredSummX().getVariable(), line.getP2().getX());

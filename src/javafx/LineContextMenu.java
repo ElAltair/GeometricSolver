@@ -23,13 +23,15 @@ public class LineContextMenu extends ContextMenu {
         MenuItem fixAxis = new MenuItem("Fix axis");
         MenuItem fixLength = new MenuItem("Fix length");
         MenuItem fixAngle = new MenuItem("Fix angle");
+        MenuItem fixParallel = new MenuItem("Parallel to ...");
         MenuItem showConstrains = new MenuItem("Show constraints...");
         menuItems.put("fixFull", fixFull);
         menuItems.put("fixAxis", fixAxis);
         menuItems.put("fixLength", fixLength);
         menuItems.put("fixAngle", fixAngle);
+        menuItems.put("fixParallel", fixParallel);
         menuItems.put("showConstraints", showConstrains);
-        this.getItems().addAll(fixFull, fixAngle, fixAxis, fixLength, showConstrains);
+        this.getItems().addAll(fixFull, fixAngle, fixAxis, fixLength, fixParallel, showConstrains);
     }
 
 }

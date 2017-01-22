@@ -2,6 +2,7 @@ package geometric_solver.geometry;
 
 import geometric_solver.math.*;
 import geometric_solver.math.constraints.FixLength;
+import geometric_solver.math.constraints.FixParallel;
 import javafx.LineContextMenu;
 import javafx.Pos;
 import javafx.geometry.Insets;
@@ -218,6 +219,24 @@ public class Line extends javafx.scene.shape.Line {
                 angleMenu.getItems().addAll(horizontal, vertical, choose);
                 angleMenu.show(this, event.getScreenX(), event.getScreenY());
             });
+            lineContextMenu.menuItems.get("fixParallel").setOnAction(event1 -> {
+                root.getChildren().stream().filter(node -> node instanceof Line).forEach(node -> {
+                    ((Line) node).setOnMouseClicked(click -> {
+                        Line l2 = (Line) click.getSource();
+                        this.fixParallel(this, l2);
+                        System.out.println("paralleled!");
+                        /** Вернуться к обычной обработке*/
+                        root.getChildren().stream().filter(elem -> elem instanceof Line).forEach(elem -> {
+                            ((Line) elem).setOnMouseClicked(event2 -> {
+
+                                //nothing
+
+                            });
+
+                        });
+                    });
+                });
+            });
             lineContextMenu.menuItems.get("showConstraints").setOnAction(event1 -> {
                 Stage table = new Stage();
                 table.setTitle("Line Constraints");
@@ -272,6 +291,15 @@ public class Line extends javafx.scene.shape.Line {
             });
             lineContextMenu.show(this, event.getScreenX(), event.getScreenY());
         });
+    }
+
+    public void fixParallel(Line l1, Line l2) {
+        FixParallel fixParallel = new FixParallel(l1, l2);
+        l1.lineConstraints.add(fixParallel);
+        l2.lineConstraints.add(fixParallel);
+        lagrange.addConstraint(fixParallel);
+        newtonSolver.solve();
+        updateObjectOnScene();
     }
 
     public void fixAngle(double angle) {
@@ -341,6 +369,7 @@ public class Line extends javafx.scene.shape.Line {
             line.setStartY((source.getValue(line.getP1().getSquaredSummY().getVariable())));
             line.setEndX((source.getValue(line.getP2().getSquaredSummX().getVariable())));
             line.setEndY((source.getValue(line.getP2().getSquaredSummY().getVariable())));
+            line.lengthRecalc();
             source.setVariable(line.getP1().getSquaredSummX().getVariable(), line.getP1().getX());
             source.setVariable(line.getP1().getSquaredSummY().getVariable(), line.getP1().getY());
             source.setVariable(line.getP2().getSquaredSummX().getVariable(), line.getP2().getX());
@@ -354,5 +383,9 @@ public class Line extends javafx.scene.shape.Line {
 
     public void setSource(Source source) {
         this.source = source;
+    }
+
+    public void lengthRecalc() {
+        this.length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
     }
 }

@@ -15,7 +15,7 @@ public class FixLength extends Constraint {
 
     public FixLength(Variable xStart, Variable yStart, Variable xEnd, Variable yEnd, double fixLength) {
         if(fixLength == 0)
-            fixLength = 0.01;
+            fixLength = 0.1;
         this.fixLength = fixLength;
         this.xStart = xStart;
         this.xEnd = xEnd;
