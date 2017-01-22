@@ -2,8 +2,10 @@ package geometric_solver.geometry;
 
 import geometric_solver.math.Constraint;
 import geometric_solver.math.Differentiable;
+import geometric_solver.math.Lagrange;
 import geometric_solver.math.SquaredDiff;
 import geometric_solver.math.constraints.FixLength;
+import javafx.LineContextMenu;
 import javafx.Pos;
 import javafx.scene.control.Dialog;
 import javafx.scene.paint.Color;
@@ -16,11 +18,14 @@ public class Line extends javafx.scene.shape.Line {
     private double length;
     private Point p1;
     private Point p2;
+    private LineContextMenu lineContextMenu;
+    private Lagrange lagrange;
 
     public Line(Point p1, Point p2) {
         super(p1.getX(), p1.getY(), p2.getX(), p2.getY());
         this.p1 = p1;
         this.p2 = p2;
+        lineContextMenu = new LineContextMenu();
         length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
         this.setStrokeWidth(3);
 
@@ -95,7 +100,15 @@ public class Line extends javafx.scene.shape.Line {
         });
 
         this.setOnContextMenuRequested(event -> {
-            System.out.println("Context Menu shit");
+            lineContextMenu.menuItems.get("fixFull").setOnAction(menuEvent -> {
+                p1.fixAxis(Axis.AXIS_X, p1.getCenterX());
+                p1.fixAxis(Axis.AXIS_Y, p1.getCenterY());
+                p2.fixAxis(Axis.AXIS_X, p2.getCenterX());
+                p2.fixAxis(Axis.AXIS_Y, p2.getCenterY());
+                System.out.println("Fully fixed Line!");
+                lagrange.updateLabel();
+            } );
+
         });
     }
 
@@ -134,4 +147,11 @@ public class Line extends javafx.scene.shape.Line {
         return returnArray;
     }
 
+    public void setLagrange(Lagrange lagrange) {
+        this.lagrange = lagrange;
+    }
+
+    public Lagrange getLagrange() {
+        return lagrange;
+    }
 }

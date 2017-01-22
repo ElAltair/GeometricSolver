@@ -247,13 +247,18 @@ public class Point extends Circle {
     */
 
     public void fixAxis(Axis fixAxis, double value) {
-        if (fixAxis == Axis.AXIS_X)
+        if (fixAxis == Axis.AXIS_X) {
             pointConstraints.add(new FixAxis(fixAxis, value, squaredSummX.getVariable()));
-        else if (fixAxis == Axis.AXIS_Y)
+            lagrange.addConstraint(new FixAxis(fixAxis, value, squaredSummX.getVariable()));
+        }
+        else if (fixAxis == Axis.AXIS_Y) {
             pointConstraints.add(new FixAxis(fixAxis, value, squaredSummY.getVariable()));
+            lagrange.addConstraint(new FixAxis(fixAxis, value, squaredSummY.getVariable()));
+        }
         else
             throw new IllegalArgumentException("Can't create constraint - FixAxis, for point "
                     + this.toString() + "wrong axis");
+
     }
 
     public ArrayList<Constraint> getConstrains() {
