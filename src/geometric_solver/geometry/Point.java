@@ -2,6 +2,7 @@ package geometric_solver.geometry;
 
 import geometric_solver.math.*;
 import geometric_solver.math.constraints.FixAxis;
+import geometric_solver.math.constraints.FixLength;
 import javafx.PointContextMenu;
 import javafx.Pos;
 import javafx.event.EventHandler;
@@ -18,7 +19,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static javax.swing.UIManager.get;
 
@@ -90,6 +90,8 @@ public class Point extends Circle {
             Point point = (Point) event.getSource();
             //point.updateLagrangeComponents(newPosX, newPosY);
             point.updateLagrangeComponents(event.getSceneX(), event.getSceneY());
+            newtonSolver.solve();
+            updateObjectOnScene();
         });
 
         releaseEvent = event -> {
@@ -211,6 +213,65 @@ public class Point extends Circle {
                 fixAxisContextMenu.getItems().addAll(fixX, fixY);
                 fixAxisContextMenu.show(this, event.getScreenX(), event.getScreenY());
             });
+            pointContextMenu.menuItems.get("fixDistanceToPoint").setOnAction(event1 -> {
+                root.getChildren().stream().filter(node -> node instanceof Point).forEach(node -> {
+                    ((Point) node).setOnMouseClicked(click -> {
+                        Point p2 = (Point) click.getSource();
+                        Stage dialog = new Stage();
+                        dialog.setWidth(230);
+                        dialog.setHeight(70);
+                        dialog.initStyle(StageStyle.UTILITY);
+                        TextField value = new TextField();
+                        value.setPrefWidth(160);
+                        value.setPadding(new Insets(10, 10, 10, 10));
+                        value.setText("Enter your value");
+                        Button submitValue = new Button("Submit");
+                        submitValue.setPrefWidth(70);
+                        submitValue.setPadding(new Insets(10, 10, 10, 10));
+                        submitValue.setAlignment(javafx.geometry.Pos.CENTER);
+                        submitValue.setOnAction(submit -> {
+                            try {
+                                this.fixDistance(this, p2, new Double(value.getText()));
+                                System.out.println("Fixed X with:" + new Double(value.getText()));
+                                dialog.close();
+                            } catch (Exception e) {
+                                value.setText("WRONG VALUE");
+                            }
+                        });
+                        GridPane gridPane = new GridPane();
+                        gridPane.add(value, 0, 0);
+                        gridPane.setPrefWidth(300);
+                        gridPane.setPrefHeight(100);
+                        gridPane.add(submitValue, 1, 0);
+                        Scene scene = new Scene(gridPane);
+                        dialog.setScene(scene);
+                        dialog.setTitle("Enter value for constraint");
+                        dialog.show();
+                        /** Вернуться к обычной обработке*/
+                        root.getChildren().stream().filter(elem -> elem instanceof Point).forEach(elem -> {
+                            ((Point) elem).setOnMouseClicked(event2 -> {
+                                    // r.setFill(Color.RED);
+                                    Circle source = (Circle) event2.getSource();
+                                    double nodeX = event2.getX();
+                                    double nodeY = event2.getY();
+                                    double deltaX = root.getScene().getX() - event2.getSceneX();
+                                    double deltaY = root.getScene().getY() - event2.getSceneY();
+                                    double pointPosX = 0.0;
+                                    double pointPosY = 0.0;
+
+                                    pointPosX = event2.getSceneX() - ((Circle) event2.getSource()).getCenterX();
+                                    pointPosY = event2.getSceneY() - ((Circle) event2.getSource()).getCenterY();
+                                    System.out.println("POINT");
+
+                                    oldPoint.setX(pointPosX);
+                                    oldPoint.setY(pointPosY);
+
+                                });
+
+                        });
+                    });
+                });
+            });
             pointContextMenu.menuItems.get("showConstraints").setOnAction(event1 -> {
                 Stage table = new Stage();
                 table.setTitle("Point Constraints");
@@ -242,6 +303,16 @@ public class Point extends Circle {
 
         activateDragging(true);
 
+    }
+
+    private void fixDistance(Point p1, Point p2, Double value) {
+        FixLength fixLength = new FixLength(p1.getSquaredSummX().getVariable(), p1.getSquaredSummY().getVariable(),
+                p2.getSquaredSummX().getVariable(), p2.getSquaredSummY().getVariable(), value);
+        this.pointConstraints.add(fixLength);
+        p2.pointConstraints.add(fixLength);
+        lagrange.addConstraint(fixLength);
+        newtonSolver.solve();
+        updateObjectOnScene();
     }
 
     public void setLagrange(Lagrange lagrange) {
