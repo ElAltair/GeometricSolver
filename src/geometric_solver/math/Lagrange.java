@@ -12,13 +12,13 @@ public class Lagrange {
     private Source source;
     private Label lagrangeLabel;
 
-    public void setLagrangeLabel(Label lagrangeLabel) {
-        this.lagrangeLabel = lagrangeLabel;
-    }
-
     public Lagrange(Source source) {
         functonParts = new ArrayList<>();
         this.source = source;
+    }
+
+    public void setLagrangeLabel(Label lagrangeLabel) {
+        this.lagrangeLabel = lagrangeLabel;
     }
 
     //Не понимаю, почему здесь нельзя передавать Differentiable
@@ -54,8 +54,16 @@ public class Lagrange {
     */
 
     public Lagrange addConstraint(Constraint constraint) {
-        functonParts.add(constraint);
-        source.add(constraint.getVariable(), 0.0);
+        boolean constraintIsPresented = false;
+        for (Differentiable diff : functonParts) {
+            if (diff.equals(constraint)) {
+                constraintIsPresented = true;
+            }
+        }
+        if (!constraintIsPresented) {
+            functonParts.add(constraint);
+            source.add(constraint.getVariable(), 0.0);
+        }
         return this;
     }
 

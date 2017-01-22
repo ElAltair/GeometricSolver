@@ -1,9 +1,5 @@
 package geometric_solver.math;
 
-import geometric_solver.math.Differentiable;
-import geometric_solver.math.Source;
-import geometric_solver.math.Variable;
-
 public class SquaredDiff implements Differentiable {
 
     private Variable var;
