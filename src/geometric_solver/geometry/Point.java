@@ -232,9 +232,10 @@ public class Point extends Circle {
                         submitValue.setOnAction(submit -> {
                             try {
                                 this.fixDistance(this, p2, new Double(value.getText()));
-                                System.out.println("Fixed X with:" + new Double(value.getText()));
+                                System.out.println("Fixed distance with:" + new Double(value.getText()));
                                 dialog.close();
                             } catch (Exception e) {
+                                e.printStackTrace();
                                 value.setText("WRONG VALUE");
                             }
                         });
@@ -308,8 +309,8 @@ public class Point extends Circle {
     private void fixDistance(Point p1, Point p2, Double value) {
         FixLength fixLength = new FixLength(p1.getSquaredSummX().getVariable(), p1.getSquaredSummY().getVariable(),
                 p2.getSquaredSummX().getVariable(), p2.getSquaredSummY().getVariable(), value);
-        this.pointConstraints.add(fixLength);
-        p2.pointConstraints.add(fixLength);
+        //this.pointConstraints.add(fixLength);
+        //p2.pointConstraints.add(fixLength);
         lagrange.addConstraint(fixLength);
         newtonSolver.solve();
         updateObjectOnScene();
@@ -403,6 +404,17 @@ public class Point extends Circle {
             point.setCenterY(source.getValue(point.getSquaredSummY().getVariable()));
             source.setVariable(point.getSquaredSummX().getVariable(), point.getX());
             source.setVariable(point.getSquaredSummY().getVariable(), point.getY());
+        });
+        root.getChildren().stream().filter((elem) -> elem instanceof Line).forEach((elem) -> {
+            Line line = (Line) elem;
+            line.setStartX((source.getValue(line.getP1().getSquaredSummX().getVariable())));
+            line.setStartY((source.getValue(line.getP1().getSquaredSummY().getVariable())));
+            line.setEndX((source.getValue(line.getP2().getSquaredSummX().getVariable())));
+            line.setEndY((source.getValue(line.getP2().getSquaredSummY().getVariable())));
+            source.setVariable(line.getP1().getSquaredSummX().getVariable(), line.getP1().getX());
+            source.setVariable(line.getP1().getSquaredSummY().getVariable(), line.getP1().getY());
+            source.setVariable(line.getP2().getSquaredSummX().getVariable(), line.getP2().getX());
+            source.setVariable(line.getP2().getSquaredSummY().getVariable(), line.getP2().getY());
         });
     }
 
