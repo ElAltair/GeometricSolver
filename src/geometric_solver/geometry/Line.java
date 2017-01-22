@@ -3,14 +3,11 @@ package geometric_solver.geometry;
 import geometric_solver.math.Constraint;
 import geometric_solver.math.Differentiable;
 import geometric_solver.math.Lagrange;
-import geometric_solver.math.SquaredDiff;
 import geometric_solver.math.constraints.FixLength;
 import javafx.LineContextMenu;
 import javafx.Pos;
-import javafx.scene.control.Dialog;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.StrokeLineJoin;
 
 import java.util.ArrayList;
 
@@ -147,11 +144,11 @@ public class Line extends javafx.scene.shape.Line {
         return returnArray;
     }
 
-    public void setLagrange(Lagrange lagrange) {
-        this.lagrange = lagrange;
-    }
-
     public Lagrange getLagrange() {
         return lagrange;
+    }
+
+    public void setLagrange(Lagrange lagrange) {
+        this.lagrange = lagrange;
     }
 }

@@ -9,24 +9,16 @@ import javafx.PointContextMenu;
 import javafx.Pos;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.VPos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
-
-import static java.awt.SystemColor.menu;
 
 public class Point extends Circle {
 
@@ -40,16 +32,9 @@ public class Point extends Circle {
     private EventHandler<MouseEvent> releaseEvent;
     private ArrayList<Differentiable> lagrangeComponents;
     private Lagrange lagrange;
-
-    public void setLagrange(Lagrange lagrange) {
-        this.lagrange = lagrange;
-    }
-
     private ArrayList<Constraint> pointConstraints;
-
     private double startVaueX;
     private double startVaueY;
-
     public Point(double x, double y) {
         super(x, y, 4.0);
         lagrangeComponents = new ArrayList<>();
@@ -60,9 +45,10 @@ public class Point extends Circle {
 
         //squaredSummX = SquaredDiff.build(x, oldPoint.getX());
         //squaredSummY = SquaredDiff.build(y, oldPoint.getY());
+
         // TODO ONLY FOR FUCKING DEBUG PURPOSE! REMOVE THIS HARDCODE
-        squaredSummX = SquaredDiff.build(x, 199.0);
-        squaredSummY = SquaredDiff.build(y, 152.0);
+        squaredSummX = SquaredDiff.build(x, oldPoint.getX());
+        squaredSummY = SquaredDiff.build(y, oldPoint.getY());
         lagrangeComponents.add(squaredSummX);
         lagrangeComponents.add(squaredSummY);
 
@@ -227,6 +213,10 @@ public class Point extends Circle {
 
         activateDragging(true);
 
+    }
+
+    public void setLagrange(Lagrange lagrange) {
+        this.lagrange = lagrange;
     }
 
     public Pos getOldPoint() {
