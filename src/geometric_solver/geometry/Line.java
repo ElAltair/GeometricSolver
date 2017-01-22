@@ -45,24 +45,28 @@ public class Line extends javafx.scene.shape.Line {
 
 
         this.getP1().setOnMouseDragged(event -> {
+            /*
             double ofsetX = event.getSceneX();
             double ofsetY = event.getSceneY();
             double newPosX = ofsetX + p2.getOldPoint().getX();
             double newPosY = ofsetY + p2.getOldPoint().getY();
+            */
             Point point = (Point) event.getSource();
-            point.updateLagrangeComponents(newPosX, newPosY);
+            point.updateLagrangeComponents(event.getSceneX(), event.getSceneY());
             newtonSolver.solve();
             updateObjectOnScene();
             length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
         });
 
         this.getP2().setOnMouseDragged(event -> {
+            /*
             double ofsetX = event.getSceneX();
             double ofsetY = event.getSceneY();
             double newPosX = ofsetX + p2.getOldPoint().getX();
             double newPosY = ofsetY + p2.getOldPoint().getY();
+            */
             Point point = (Point) event.getSource();
-            point.updateLagrangeComponents(newPosX, newPosY);
+            point.updateLagrangeComponents(event.getSceneX(), event.getSceneY());
             newtonSolver.solve();
             updateObjectOnScene();
             length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));

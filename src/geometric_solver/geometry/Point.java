@@ -90,6 +90,8 @@ public class Point extends Circle {
             Point point = (Point) event.getSource();
             //point.updateLagrangeComponents(newPosX, newPosY);
             point.updateLagrangeComponents(event.getSceneX(), event.getSceneY());
+            newtonSolver.solve();
+            updateObjectOnScene();
         });
 
         releaseEvent = event -> {
