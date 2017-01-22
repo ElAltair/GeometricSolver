@@ -39,9 +39,11 @@ public class NewtonSolver {
     public void solve() {
 
         updateSolver();
+        int count = 0;
+        //int iMax = 10;
         do {
             HesseMatrix = builder.createMatrixA();
-            /*
+
             solverSource.print();
             System.out.println("Matrix A: ");
             for(int i =0 ; i < dimension; ++i) {
@@ -55,10 +57,10 @@ public class NewtonSolver {
                     System.out.println(resultVector[i]);
             }
             System.out.println();
-            */
+
             resultVector = builder.createVectorB();
             vectorX = Gaus.solve(HesseMatrix, resultVector);
-            /*
+
             for(int i =0 ; i < dimension; ++i) {
                 System.out.println(vectorX[i]);
             }
@@ -68,7 +70,9 @@ public class NewtonSolver {
             Arrays.stream(vectorX).forEach((elem) -> System.out.println(elem));
             */
             solverSource.update(vectorX);
+            ++count;
         }
         while (getMaxX(vectorX) > epsilon);
+        // while (getMaxX(vectorX) > epsilon || i < iMax);
     }
 }

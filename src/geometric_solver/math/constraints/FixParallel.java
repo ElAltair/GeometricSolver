@@ -293,7 +293,7 @@ public class FixParallel extends Constraint {
 
     @Override
     public Variable getVariable() {
-        return null;
+        return lambda;
     }
 
     @Override

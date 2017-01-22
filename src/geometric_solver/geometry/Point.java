@@ -215,7 +215,7 @@ public class Point extends Circle {
             });
             pointContextMenu.menuItems.get("fixDistanceToPoint").setOnAction(event1 -> {
                 root.getChildren().stream().filter(node -> node instanceof Point).forEach(node -> {
-                    ((Point) node).setOnMouseClicked(click -> {
+                    node.setOnMouseClicked(click -> {
                         Point p2 = (Point) click.getSource();
                         Stage dialog = new Stage();
                         dialog.setWidth(230);
@@ -250,7 +250,7 @@ public class Point extends Circle {
                         dialog.show();
                         /** Вернуться к обычной обработке*/
                         root.getChildren().stream().filter(elem -> elem instanceof Point).forEach(elem -> {
-                            ((Point) elem).setOnMouseClicked(event2 -> {
+                            elem.setOnMouseClicked(event2 -> {
                                     // r.setFill(Color.RED);
                                     Circle source = (Circle) event2.getSource();
                                     double nodeX = event2.getX();
@@ -404,6 +404,9 @@ public class Point extends Circle {
             point.setCenterY(source.getValue(point.getSquaredSummY().getVariable()));
             source.setVariable(point.getSquaredSummX().getVariable(), point.getX());
             source.setVariable(point.getSquaredSummY().getVariable(), point.getY());
+            for (Differentiable diff : point.getConstrains()) {
+                source.setVariable(diff.getVariable(), 0.0);
+            }
         });
         root.getChildren().stream().filter((elem) -> elem instanceof Line).forEach((elem) -> {
             Line line = (Line) elem;
@@ -415,6 +418,12 @@ public class Point extends Circle {
             source.setVariable(line.getP1().getSquaredSummY().getVariable(), line.getP1().getY());
             source.setVariable(line.getP2().getSquaredSummX().getVariable(), line.getP2().getX());
             source.setVariable(line.getP2().getSquaredSummY().getVariable(), line.getP2().getY());
+            for (Differentiable diff : line.getP1().getConstrains()) {
+                source.setVariable(diff.getVariable(), 0.0);
+            }
+            for (Differentiable diff : line.getP2().getConstrains()) {
+                source.setVariable(diff.getVariable(), 0.0);
+            }
         });
     }
 
