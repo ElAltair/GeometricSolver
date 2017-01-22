@@ -218,6 +218,7 @@ public class Point extends Circle {
 
     public void setLagrange(Lagrange lagrange) {
         this.lagrange = lagrange;
+        lagrange.addComponents(this.getLagrangeComponents());
     }
 
     public Pos getOldPoint() {
@@ -260,7 +261,6 @@ public class Point extends Circle {
 
     public void activateDragging(boolean status) {
         if (status) {
-            this.setOnMouseDragged(dragEvent);
             this.setOnMouseClicked(clickedEvent);
         } else
             this.setOnMouseDragged(null);
@@ -268,6 +268,10 @@ public class Point extends Circle {
 
     public void onMouseRelease(EventHandler<MouseEvent> event) {
         this.setOnMouseReleased(event);
+    }
+
+    public void onMouseDraged(EventHandler<MouseEvent> event) {
+        this.setOnMouseDragged(event);
     }
 
     public double getX() {
@@ -283,8 +287,20 @@ public class Point extends Circle {
         lagrangeComponents.get(1).setValue(this.getCenterY());
     }
 
+    public void updateLagrangeComponents(double x, double y) {
+        lagrangeComponents.get(0).setValue(x);
+        lagrangeComponents.get(1).setValue(y);
+    }
+
     public ArrayList<Differentiable> getLagrangeComponents() {
         return lagrangeComponents;
     }
 
+    public SquaredDiff getSquaredSummX() {
+        return squaredSummX;
+    }
+
+    public SquaredDiff getSquaredSummY() {
+        return squaredSummY;
+    }
 }

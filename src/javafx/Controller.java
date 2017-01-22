@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 
 import javax.naming.Context;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Controller {
@@ -201,17 +202,14 @@ public class Controller {
             double ofsetY = event.getSceneY();
             double newPosX = ofsetX + oldPoint.x;
             double newPosY = ofsetY + oldPoint.y;
-            Circle c = ((Circle) event.getSource());
-            c.setCenterX(newPosX);
-            c.setCenterY(newPosY);
+            Point point = (Point) event.getSource();
+            point.updateLagrangeComponents(newPosX, newPosY);
+            lagrangeLabel.setText(lagrange.print());
+            newtonSolver.solve();
+            updateObjectOnScene();
         };
 
         onCircleReleasedEvent = event -> {
-            Point point = (Point) event.getSource();
-            point.updateLagrangeComponents();
-            lagrangeLabel.setText(lagrange.print());
-            MatrixBuilder testMatrix = new MatrixBuilder(lagrange.getSize(), lagrange, source);
-            newtonSolver.solve();
         };
 
 
@@ -220,6 +218,16 @@ public class Controller {
             sceneYCoord.setText(((Double) event.getY()).toString());
         };
 
+    }
+
+    private void updateObjectOnScene() {
+        root.getChildren().stream().filter((elem) -> elem instanceof Point).forEach((elem) -> {
+            Point point = (Point) elem;
+            point.setCenterX(source.getValue(point.getSquaredSummX().getVariable()));
+            point.setCenterY(source.getValue(point.getSquaredSummY().getVariable()));
+            source.setVariable(point.getSquaredSummX().getVariable(), point.getX());
+            source.setVariable(point.getSquaredSummY().getVariable(), point.getY());
+        });
     }
 
     public void initDraggingNodes(EventHandler<MouseEvent> mouse, EventHandler<MouseEvent> drag,
@@ -271,8 +279,8 @@ public class Controller {
                     // Circle point = new Circle(xClick, yClick, R);
                     Point point = new Point(xClick, yClick);
                     point.setLagrange(lagrange);
-                    lagrange.addComponents(point.getLagrangeComponents());
                     point.onMouseRelease(onCircleReleasedEvent);
+                    point.onMouseDraged(onCircleDraggedEvent);
                     root.getChildren().add(point);
 
                 });
@@ -282,6 +290,8 @@ public class Controller {
                     double yClick = clickedEvent.getSceneY();
                     Point point = new Point(xClick, yClick);
                     point.setLagrange(lagrange);
+                    point.onMouseRelease(onCircleReleasedEvent);
+                    point.onMouseDraged(onCircleDraggedEvent);
                     createdPoint.add(point);
                     root.getChildren().add(point);
 
