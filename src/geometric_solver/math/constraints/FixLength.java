@@ -36,6 +36,11 @@ public class FixLength extends Constraint {
         } else if (yEnd.equals(var)) {
             return 2 * source.getValue(yEnd) * source.getValue(lambda) -
                     2 * source.getValue(lambda) * source.getValue(yStart);
+        } else if (lambda.equals(var)) {
+            return source.getValue(xEnd) * source.getValue(xEnd) - 2 * source.getValue(xStart) * source.getValue(xEnd) +
+                    source.getValue(xStart) * source.getValue(xStart) + source.getValue(yEnd) * source.getValue(yEnd) -
+                    2 * source.getValue(yStart) * source.getValue(yEnd) + source.getValue(yStart) * source.getValue(yStart) -
+                    fixLength * fixLength;
         } else
             return 0.0;
     }
@@ -75,12 +80,22 @@ public class FixLength extends Constraint {
             } else if (lambda.equals(varTwo)) {
                 return 2 * source.getValue(yEnd) - 2 * source.getValue(yStart);
             } else return 0.0;
+        } else if (lambda.equals(varOne)) {
+            if (xStart.equals(varTwo)) {
+                return -2 * source.getValue(xEnd) + 2 * source.getValue(xStart);
+            } else if (xEnd.equals(varTwo)) {
+                return 2 * source.getValue(xEnd) - 2 * source.getValue(xStart);
+            } else if (yStart.equals(varTwo)) {
+                return -2 * source.getValue(yEnd) + 2 * source.getValue(yStart);
+            } else if (yEnd.equals(varTwo)) {
+                return 2 * source.getValue(yEnd) - 2 * source.getValue(yStart);
+            } else return 0.0;
         } else return 0.0;
     }
 
     @Override
     public Variable getVariable() {
-        return new Variable(1, VariableType.X);
+        return lambda;
     }
 
     @Override
@@ -100,7 +115,7 @@ public class FixLength extends Constraint {
     @Override
     public String toString() {
         return lambda.getType().name() + lambda.getId() + " * ( ( " + xEnd.getType().name() + xEnd.getId() +
-                " - " + xStart.getType().name() + xEnd.getId() + ") ^ 2 + ( " + yEnd.getType().name() + yEnd.getId() +
+                " - " + xStart.getType().name() + xStart.getId() + ") ^ 2 + ( " + yEnd.getType().name() + yEnd.getId() +
                 " - " + yStart.getType().name() + yStart.getId() + " ) ^ 2  - " + fixLength + " ^ 2 )";
     }
 }

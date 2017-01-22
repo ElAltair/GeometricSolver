@@ -43,8 +43,10 @@ public class NewtonSolver {
             HesseMatrix = builder.createMatrixA();
             resultVector = builder.createVectorB();
             vectorX = Gaus.solve(HesseMatrix, resultVector);
+            /*
             System.out.println("After GAUS");
             Arrays.stream(vectorX).forEach((elem) -> System.out.println(elem));
+            */
             solverSource.update(vectorX);
         }
         while (getMaxX(vectorX) > epsilon);
