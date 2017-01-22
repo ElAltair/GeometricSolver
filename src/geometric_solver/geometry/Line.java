@@ -28,6 +28,7 @@ public class Line extends javafx.scene.shape.Line {
     private Pane root;
     private NewtonSolver newtonSolver;
     private Source source;
+    private ArrayList<Constraint> lineConstraints;
 
     public Line(Point p1, Point p2) {
         super(p1.getX(), p1.getY(), p2.getX(), p2.getY());
@@ -122,8 +123,11 @@ public class Line extends javafx.scene.shape.Line {
     }
 
 
-    public static Constraint fixLength(double value) {
-        return new FixLength();
+    public void fixLength(double value) {
+        FixLength fixLength = new FixLength(p1.getSquaredSummX().getVariable(), p1.getSquaredSummY().getVariable(),
+                p2.getSquaredSummX().getVariable(), p2.getSquaredSummY().getVariable(), value);
+        lineConstraints.add(fixLength);
+        lagrange.addConstraint(fixLength);
     }
 
     public Point getP1() {
@@ -149,21 +153,20 @@ public class Line extends javafx.scene.shape.Line {
         this.lagrange = lagrange;
     }
 
+    public Pane getRoot() {
+        return root;
+    }
 
     public void setRoot(Pane root) {
         this.root = root;
     }
 
-    public Pane getRoot() {
-        return root;
+    public NewtonSolver getNewtonSolver() {
+        return newtonSolver;
     }
 
     public void setNewtonSolver(NewtonSolver newtonSolver) {
         this.newtonSolver = newtonSolver;
-    }
-
-    public NewtonSolver getNewtonSolver() {
-        return newtonSolver;
     }
 
     private void updateObjectOnScene() {
@@ -187,11 +190,11 @@ public class Line extends javafx.scene.shape.Line {
         });
     }
 
-    public void setSource(Source source) {
-        this.source = source;
-    }
-
     public Source getSource() {
         return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
     }
 }
