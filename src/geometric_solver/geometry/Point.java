@@ -90,8 +90,6 @@ public class Point extends Circle {
             Point point = (Point) event.getSource();
             //point.updateLagrangeComponents(newPosX, newPosY);
             point.updateLagrangeComponents(event.getSceneX(), event.getSceneY());
-            newtonSolver.solve();
-            updateObjectOnScene();
         });
 
         releaseEvent = event -> {
@@ -113,7 +111,6 @@ public class Point extends Circle {
                 this.fixAxis(Axis.AXIS_X, getCenterX());
                 this.fixAxis(Axis.AXIS_Y, getCenterY());
                 System.out.println("Fixed coords!");
-                lagrange.updateLabel();
             });
             pointContextMenu.menuItems.get("fixAxis").setOnAction(menuClicked -> {
                 ContextMenu fixAxisContextMenu = new ContextMenu();
@@ -126,7 +123,6 @@ public class Point extends Circle {
                     chooseCurrent.setOnAction(chooseCurrentEvent -> {
                         this.fixAxis(Axis.AXIS_Y, getCenterY());
                         System.out.println("Fixed Current Y!");
-                        lagrange.updateLabel();
                     });
                     enterValue.setOnAction(enterValueEvent -> {
 
@@ -147,7 +143,6 @@ public class Point extends Circle {
                                 this.fixAxis(Axis.AXIS_Y, new Double(value.getText()));
                                 System.out.println("Fixed Y with:" + new Double(value.getText()));
                                 dialog.close();
-                                lagrange.updateLabel();
                             } catch (Exception e) {
                                 value.setText("WRONG VALUE");
                             }
@@ -174,7 +169,6 @@ public class Point extends Circle {
                     chooseCurrent.setOnAction(chooseCurrentEvent -> {
                         this.fixAxis(Axis.AXIS_X, getCenterX());
                         System.out.println("Fixed Current X!");
-                        lagrange.updateLabel();
                     });
                     enterValue.setOnAction(enterValueEvent -> {
 
@@ -195,7 +189,6 @@ public class Point extends Circle {
                                 this.fixAxis(Axis.AXIS_X, new Double(value.getText()));
                                 System.out.println("Fixed X with:" + new Double(value.getText()));
                                 dialog.close();
-                                lagrange.updateLabel();
                             } catch (Exception e) {
                                 value.setText("WRONG VALUE");
                             }
@@ -264,14 +257,6 @@ public class Point extends Circle {
         oldPoint = oldPos;
     }
 
-    /*
-    public void move(double newX, double newY) {
-        visualizationObject.setCenterX(newX);
-        visualizationObject.setCenterY(newY);
-        squaredSummX = SquaredDiff.build(newX);
-        squaredSummY = SquaredDiff.build(newY);
-    }
-    */
 
     public void fixAxis(Axis fixAxis, double value) {
         if (fixAxis == Axis.AXIS_X) {
@@ -287,7 +272,8 @@ public class Point extends Circle {
         else
             throw new IllegalArgumentException("Can't create constraint - FixAxis, for point "
                     + this.toString() + "wrong axis");
-
+        newtonSolver.solve();
+        updateObjectOnScene();
     }
 
     public ArrayList<Constraint> getConstrains() {
