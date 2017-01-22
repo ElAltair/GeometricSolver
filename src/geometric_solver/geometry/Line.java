@@ -6,8 +6,17 @@ import geometric_solver.math.Lagrange;
 import geometric_solver.math.constraints.FixLength;
 import javafx.LineContextMenu;
 import javafx.Pos;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 
@@ -64,7 +73,7 @@ public class Line extends javafx.scene.shape.Line {
             this.setEndY(p2.getY());
         });
 
-        Pos oldEvent = new Pos(0,0);
+        Pos oldEvent = new Pos(0, 0);
 
         this.setOnMouseEntered(event -> {
             oldEvent.setX(0);
@@ -79,9 +88,9 @@ public class Line extends javafx.scene.shape.Line {
 
             length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
             this.setStartX(this.getStartX() + offsetX);
-            this.setEndX(this.getEndX()+ offsetX);
-            this.setStartY(this.getStartY()+ offsetY);
-            this.setEndY(this.getEndY()+ offsetY);
+            this.setEndX(this.getEndX() + offsetX);
+            this.setStartY(this.getStartY() + offsetY);
+            this.setEndY(this.getEndY() + offsetY);
             p1.setCenterX(this.getStartX());
             p1.setCenterY(this.getStartY());
             p2.setCenterX(this.getEndX());
@@ -104,8 +113,27 @@ public class Line extends javafx.scene.shape.Line {
                 p2.fixAxis(Axis.AXIS_Y, p2.getCenterY());
                 System.out.println("Fully fixed Line!");
                 lagrange.updateLabel();
-            } );
-
+            });
+            lineContextMenu.menuItems.get("fixAxis").setOnAction(menuClicked -> {
+                ContextMenu fixAxisContextMenu = new ContextMenu();
+                MenuItem fixY = new MenuItem("Fix Y");
+                MenuItem fixX = new MenuItem("Fix X");
+                fixY.setOnAction(innerMenuClickedY -> {
+                    p1.fixAxis(Axis.AXIS_Y, p1.getCenterY());
+                    p2.fixAxis(Axis.AXIS_Y, p2.getCenterY());
+                    System.out.println("Fixed Current Y!");
+                    lagrange.updateLabel();
+                });
+                fixX.setOnAction(innerMenuClickedY -> {
+                    p1.fixAxis(Axis.AXIS_X, p1.getCenterX());
+                    p2.fixAxis(Axis.AXIS_X, p2.getCenterX());
+                    System.out.println("Fixed Current X!");
+                    lagrange.updateLabel();
+                });
+                fixAxisContextMenu.getItems().addAll(fixX, fixY);
+                fixAxisContextMenu.show(this, event.getScreenX(), event.getScreenY());
+            });
+            lineContextMenu.show(this, event.getScreenX(), event.getScreenY());
         });
     }
 
@@ -151,4 +179,8 @@ public class Line extends javafx.scene.shape.Line {
     public void setLagrange(Lagrange lagrange) {
         this.lagrange = lagrange;
     }
+
+
+
+
 }
