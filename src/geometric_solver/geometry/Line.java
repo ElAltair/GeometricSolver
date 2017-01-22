@@ -34,6 +34,7 @@ public class Line extends javafx.scene.shape.Line {
         super(p1.getX(), p1.getY(), p2.getX(), p2.getY());
         this.p1 = p1;
         this.p2 = p2;
+        lineConstraints = new ArrayList<>();
         lineContextMenu = new LineContextMenu();
         length = Math.sqrt(Math.pow(Math.abs(p1.getX() - p2.getX()), 2) + Math.pow(Math.abs(p1.getY() - p2.getY()), 2));
         this.setStrokeWidth(3);
