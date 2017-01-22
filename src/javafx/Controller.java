@@ -50,6 +50,7 @@ public class Controller {
     private EventHandler<MouseEvent> onCirclePressedEvent;
     private EventHandler<MouseEvent> onCircleDraggedEvent;
     private EventHandler<MouseEvent> onCircleReleasedEvent;
+    private EventHandler<MouseEvent> onLineDraggedEvent;
     private boolean catchMouseCoordinates;
     private ArrayList<Shape> createdPoint;
     private ArrayList<Shape> boundPoints;
@@ -311,6 +312,9 @@ public class Controller {
                         // TODO UNCOMMENT AFTER LINE CHANGES
                          geometric_solver.geometry.Line line = new geometric_solver.geometry.Line(((Point)createdPoint.get(0)), (Point)createdPoint.get(1));
                         line.setLagrange(lagrange);
+                        line.setNewtonSolver(newtonSolver);
+                        line.setRoot(root);
+                        line.setSource(source);
 
                         //TODO UNCOMMENT AFTER LINE CHANGES
                          line.setStroke(Color.GREEN);
