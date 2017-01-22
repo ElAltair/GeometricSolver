@@ -84,6 +84,10 @@ public class Point extends Circle {
             oldPoint.setY(pointPosY);
         };
 
+        this.setOnDragDetected(event -> {
+            setOldPoint(new Pos(event.getSceneX() - this.getCenterX(), event.getSceneY() - this.getCenterY()));
+        });
+
         dragEvent = event -> {
             double ofsetX = event.getSceneX();
             double ofsetY = event.getSceneY();

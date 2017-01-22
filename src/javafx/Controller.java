@@ -31,6 +31,7 @@ public class Controller {
     public Label sceneXCoord;
     public Label sceneYCoord;
     public Label lagrangeLabel;
+
     // Math
     private Lagrange lagrange;
     private Source source;
@@ -274,6 +275,7 @@ public class Controller {
                     double xClick = clickedEvent.getSceneX();
                     double yClick = clickedEvent.getSceneY();
                     Point point = new Point(xClick, yClick);
+                    point.setLagrange(lagrange);
                     createdPoint.add(point);
                     root.getChildren().add(point);
 
@@ -291,11 +293,11 @@ public class Controller {
                         //root.getChildren().add(point2);
 
                         // TODO UNCOMMENT AFTER LINE CHANGES
-                        // geometric_solver.geometry.Line line = new geometric_solver.geometry.Line(((Point)createdPoint.get(0)), (Point)createdPoint.get(1));
+                         geometric_solver.geometry.Line line = new geometric_solver.geometry.Line(((Point)createdPoint.get(0)), (Point)createdPoint.get(1));
 
 
                         //TODO UNCOMMENT AFTER LINE CHANGES
-                        //line.setStroke(Color.GREEN);
+                         line.setStroke(Color.GREEN);
 
 
 //                        line.setOnMouseEntered(((event) -> {
@@ -384,7 +386,7 @@ public class Controller {
                         //lagrange.addComponents(line.getLagrangeComponents());
 
                         //TODO UNCOMMENT AFTER LINE CHANGES
-                        // root.getChildren().add(line);
+                         root.getChildren().add(line);
                         createdPoint.clear();
                         root.getScene().setOnMouseMoved(null);
                     }
