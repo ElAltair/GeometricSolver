@@ -40,9 +40,16 @@ public class Point extends Circle {
     private EventHandler<MouseEvent> releaseEvent;
     private ArrayList<Differentiable> lagrangeComponents;
     private Lagrange lagrange;
+
+    public void setLagrange(Lagrange lagrange) {
+        this.lagrange = lagrange;
+    }
+
     private ArrayList<Constraint> pointConstraints;
+
     private double startVaueX;
     private double startVaueY;
+
     public Point(double x, double y) {
         super(x, y, 4.0);
         lagrangeComponents = new ArrayList<>();
@@ -53,10 +60,9 @@ public class Point extends Circle {
 
         //squaredSummX = SquaredDiff.build(x, oldPoint.getX());
         //squaredSummY = SquaredDiff.build(y, oldPoint.getY());
-
         // TODO ONLY FOR FUCKING DEBUG PURPOSE! REMOVE THIS HARDCODE
-        squaredSummX = SquaredDiff.build(x, oldPoint.getX());
-        squaredSummY = SquaredDiff.build(y, oldPoint.getY());
+        squaredSummX = SquaredDiff.build(x, 199.0);
+        squaredSummY = SquaredDiff.build(y, 152.0);
         lagrangeComponents.add(squaredSummX);
         lagrangeComponents.add(squaredSummY);
 
@@ -223,10 +229,6 @@ public class Point extends Circle {
 
     }
 
-    public void setLagrange(Lagrange lagrange) {
-        this.lagrange = lagrange;
-    }
-
     public Pos getOldPoint() {
         return oldPoint;
     }
@@ -246,18 +248,17 @@ public class Point extends Circle {
 
     public void fixAxis(Axis fixAxis, double value) {
         if (fixAxis == Axis.AXIS_X) {
-            FixAxis fixXAxis = new FixAxis(fixAxis, value, squaredSummX.getVariable());
-            pointConstraints.add(fixXAxis);
-            lagrange.addConstraint(fixXAxis);
-        } else if (fixAxis == Axis.AXIS_Y) {
-            FixAxis fixYAxis = new FixAxis(fixAxis, value, squaredSummY.getVariable());
-            pointConstraints.add(fixYAxis);
-            pointConstraints.add(fixYAxis);
-            lagrange.addConstraint(fixYAxis);
+            pointConstraints.add(new FixAxis(fixAxis, value, squaredSummX.getVariable()));
+            lagrange.addConstraint(new FixAxis(fixAxis, value, squaredSummX.getVariable()));
+        }
+        else if (fixAxis == Axis.AXIS_Y) {
+            pointConstraints.add(new FixAxis(fixAxis, value, squaredSummY.getVariable()));
+            lagrange.addConstraint(new FixAxis(fixAxis, value, squaredSummY.getVariable()));
         }
         else
             throw new IllegalArgumentException("Can't create constraint - FixAxis, for point "
                     + this.toString() + "wrong axis");
+
     }
 
     public ArrayList<Constraint> getConstrains() {
