@@ -118,6 +118,51 @@ public class Line extends javafx.scene.shape.Line {
                 fixAxisContextMenu.getItems().addAll(fixX, fixY);
                 fixAxisContextMenu.show(this, event.getScreenX(), event.getScreenY());
             });
+            lineContextMenu.menuItems.get("fixLength").setOnAction(menuClicked -> {
+                ContextMenu lengthMenu = new ContextMenu();
+                MenuItem enterValue = new MenuItem("Enter Value");
+                MenuItem chooseCurrent = new MenuItem("Choose Current");
+                chooseCurrent.setOnAction(chooseCurrentEvent -> {
+                    this.fixLength(length);
+                    System.out.println("Fixed Current length!");
+                });
+                enterValue.setOnAction(enterValueEvent -> {
+                    Stage dialog = new Stage();
+                    dialog.setWidth(230);
+                    dialog.setHeight(70);
+                    dialog.initStyle(StageStyle.UTILITY);
+                    TextField value = new TextField();
+                    value.setPrefWidth(160);
+                    value.setPadding(new Insets(10, 10, 10, 10));
+                    value.setText("Enter your value");
+                    Button submitValue = new Button("Submit");
+                    submitValue.setPrefWidth(70);
+                    submitValue.setPadding(new Insets(10, 10, 10, 10));
+                    submitValue.setAlignment(javafx.geometry.Pos.CENTER);
+                    submitValue.setOnAction(submit -> {
+                        try {
+                            this.fixLength(new Double(value.getText()));
+                            System.out.println("Fixed line length with:" + new Double(value.getText()));
+                            dialog.close();
+                            lagrange.updateLabel();
+                        } catch (Exception e) {
+                            value.setText("WRONG VALUE");
+                        }
+                    });
+                    GridPane gridPane = new GridPane();
+                    gridPane.add(value, 0, 0);
+                    gridPane.setPrefWidth(300);
+                    gridPane.setPrefHeight(100);
+                    gridPane.add(submitValue, 1, 0);
+                    Scene scene = new Scene(gridPane);
+                    dialog.setScene(scene);
+                    dialog.setTitle("Enter value for constraint");
+                    dialog.show();
+
+                });
+                lengthMenu.getItems().addAll(enterValue, chooseCurrent);
+                lengthMenu.show(this, event.getScreenX(), event.getScreenY());
+            });
             lineContextMenu.show(this, event.getScreenX(), event.getScreenY());
         });
     }
