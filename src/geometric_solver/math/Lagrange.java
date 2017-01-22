@@ -4,6 +4,8 @@ import geometric_solver.math.constraints.FixAxis;
 import javafx.scene.control.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Lagrange {
     private ArrayList<Differentiable> functonParts;
@@ -78,6 +80,10 @@ public class Lagrange {
             fullString += it.toString() + " + ";
         }
         return fullString;
+    }
+
+    public List<Differentiable> getFunctionParts() {
+        return Collections.unmodifiableList(functonParts);
     }
 
     public void updateLabel() {

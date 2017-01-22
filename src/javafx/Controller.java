@@ -6,19 +6,24 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import javax.naming.Context;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Controller {
 
@@ -28,6 +33,7 @@ public class Controller {
     public Button clearButton;
     public Button pointButton;
     public Button lineButton;
+    public Button lagrangeButton;
     public Label sceneXCoord;
     public Label sceneYCoord;
     public Label lagrangeLabel;
@@ -527,6 +533,21 @@ public class Controller {
         root.getChildren().removeIf(elem -> elem instanceof Point || elem instanceof Line);
         init(root);
         lagrangeLabel.setText("");
+    }
+
+    public void showLagrangeTable() {
+        Stage table = new Stage();
+        table.setTitle("Lagrange Components");
+
+        GridPane gridPane = new GridPane();
+        gridPane.setGridLinesVisible(true);
+        List<Differentiable> functionParts = lagrange.getFunctionParts();
+        for (int i = 0; i < functionParts.size(); i++) {
+            gridPane.add(new Text(functionParts.get(i).toString()),0,i);
+        }
+        Scene scene = new Scene(gridPane);
+        table.setScene(scene);
+        table.show();
     }
 
     public void drawGrid(Integer density, Pane buttons) {
