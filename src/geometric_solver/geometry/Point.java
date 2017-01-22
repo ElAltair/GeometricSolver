@@ -13,10 +13,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static javax.swing.UIManager.get;
 
 public class Point extends Circle {
 
@@ -210,6 +214,32 @@ public class Point extends Circle {
                 });
                 fixAxisContextMenu.getItems().addAll(fixX, fixY);
                 fixAxisContextMenu.show(this, event.getScreenX(), event.getScreenY());
+            });
+            pointContextMenu.menuItems.get("showConstraints").setOnAction(event1 -> {
+                Stage table = new Stage();
+                table.setTitle("Point Constraints");
+                GridPane gridPane = new GridPane();
+                gridPane.setGridLinesVisible(true);
+                for (int i = 0; i < pointConstraints.size(); i++) {
+                    Differentiable pointConstraint = pointConstraints.get(i);
+                    gridPane.add(new Text(pointConstraint.toString()),0,i);
+                    Button removeButton = new Button("Remove");
+                    removeButton.setOnAction(event2 -> {
+                        //TODO REMOVE CONSTRAINT
+                        pointConstraints.remove(pointConstraint);
+                        table.close();
+                        pointContextMenu.menuItems.get("showConstraints").fire();
+                        System.out.println("HAVEN'T REMOVED");
+                    });
+                    gridPane.add(removeButton, 1, i);
+                }
+                Scene scene = new Scene(gridPane);
+                if (pointConstraints.size() == 0) {
+                table.setScene(new Scene(new TextField("There is no constraints!")));
+                } else {
+                    table.setScene(scene);
+                }
+                table.show();
             });
             pointContextMenu.show(this, event.getScreenX(), event.getScreenY());
         });

@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -212,6 +213,58 @@ public class Line extends javafx.scene.shape.Line {
 
                 angleMenu.getItems().addAll(horizontal, vertical, choose);
                 angleMenu.show(this, event.getScreenX(), event.getScreenY());
+            });
+            lineContextMenu.menuItems.get("showConstraints").setOnAction(event1 -> {
+                Stage table = new Stage();
+                table.setTitle("Line Constraints");
+                GridPane gridPane = new GridPane();
+                gridPane.setGridLinesVisible(true);
+                for (int i = 0; i < lineConstraints.size(); i++) {
+                    Differentiable lineConstraint = lineConstraints.get(i);
+                    gridPane.add(new Text(lineConstraint.toString()),0,i);
+                    Button removeButton = new Button("Remove");
+                    removeButton.setOnAction(event2 -> {
+                        //TODO REMOVE CONSTRAINT
+                        lineConstraints.remove(lineConstraint);
+                        table.close();
+                        lineContextMenu.menuItems.get("showConstraints").fire();
+                        System.out.println("HAVEN'T REMOVED");
+                    });
+                    gridPane.add(removeButton, 1, i);
+                }
+                for (int i = 0; i < p1.getConstrains().size(); i++) {
+                    Differentiable pointConstraint = p1.getConstrains().get(i);
+                    gridPane.add(new Text(pointConstraint.toString()),0,i + lineConstraints.size());
+                    Button removeButton = new Button("Remove");
+                    removeButton.setOnAction(event2 -> {
+                        //TODO REMOVE CONSTRAINT
+                        p1.getConstrains().remove(pointConstraint);
+                        table.close();
+                        lineContextMenu.menuItems.get("showConstraints").fire();
+                        System.out.println("HAVEN'T REMOVED");
+                    });
+                    gridPane.add(removeButton, 1, i + lineConstraints.size());
+                }
+                for (int i = 0; i < p2.getConstrains().size(); i++) {
+                    Differentiable pointConstraint = p2.getConstrains().get(i);
+                    gridPane.add(new Text(pointConstraint.toString()),0,i + p1.getConstrains().size() + lineConstraints.size());
+                    Button removeButton = new Button("Remove");
+                    removeButton.setOnAction(event2 -> {
+                        //TODO REMOVE CONSTRAINT
+                        p2.getConstrains().remove(pointConstraint);
+                        table.close();
+                        lineContextMenu.menuItems.get("showConstraints").fire();
+                        System.out.println("HAVEN'T REMOVED");
+                    });
+                    gridPane.add(removeButton, 1, i + p1.getConstrains().size() + lineConstraints.size());
+                }
+                Scene scene = new Scene(gridPane);
+                if (lineConstraints.size() + p1.getConstrains().size() + p2.getConstrains().size() == 0) {
+                    table.setScene(new Scene(new TextField("There is no constraints!")));
+                } else {
+                    table.setScene(scene);
+                }
+                table.show();
             });
             lineContextMenu.show(this, event.getScreenX(), event.getScreenY());
         });

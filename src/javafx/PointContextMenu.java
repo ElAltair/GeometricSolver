@@ -24,11 +24,12 @@ public class PointContextMenu extends ContextMenu {
         MenuItem fixFull = new MenuItem("Fix point at this point (:");
         MenuItem fixAxis = new MenuItem("Fix point to axis");
         MenuItem fixDistanceToPoint = new MenuItem("Fix distance to point");
-
+        MenuItem showConstrains = new MenuItem("Show constraints...");
         menuItems.put("fixAxis", fixAxis);
         menuItems.put("fixFull", fixFull);
         menuItems.put("fixDistanceToPoint", fixDistanceToPoint);
-        this.getItems().addAll(fixAxis, fixFull, fixDistanceToPoint);
+        menuItems.put("showConstraints", showConstrains);
+        this.getItems().addAll(fixAxis, fixFull, fixDistanceToPoint, showConstrains);
     }
 
 
