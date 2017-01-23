@@ -1,6 +1,5 @@
 package geometric_solver.math.constraints;
 
-import geometric_solver.Main;
 import geometric_solver.geometry.Line;
 import geometric_solver.math.Constraint;
 import geometric_solver.math.Source;
@@ -8,19 +7,16 @@ import geometric_solver.math.Variable;
 import geometric_solver.math.VariableType;
 
 /**
- * Created by Vladislav on 22/01/2017.
+ * Created by Anna on 23.01.2017.
  */
-public class FixAngle extends Constraint {
-
+public class FixPerpendicularity extends Constraint{
     private Line firstLine;
     private Line secondLine;
-    private double fixAngle;
     private Variable lambda;
 
-    public FixAngle(Line l1, Line l2, double fixAngle) {
+    public FixPerpendicularity(Line l1, Line l2) {
         this.firstLine = l1;
         this.secondLine = l2;
-        this.fixAngle = fixAngle;
         this.lambda = new Variable(Variable.generateID(VariableType.LAMBDA), VariableType.LAMBDA);
     }
 
@@ -42,63 +38,22 @@ public class FixAngle extends Constraint {
         Variable y3 = secondLine.getP1().getSquaredSummY().getVariable();
         // Y4
         Variable y4 = secondLine.getP2().getSquaredSummY().getVariable();
-
         if (x1.equals(var)) {
-            return -source.getValue(x4) * source.getValue(lambda) + source.getValue(x3) * source.getValue(lambda)
-                    + ((source.getValue(x2) - source.getValue(x1)) * Math.sqrt(Math.pow(-source.getValue(x3) + source.getValue(x4), 2.0)
-                    + Math.pow(-source.getValue(y3) + source.getValue(y4), 2.0))
-                    / Math.sqrt(Math.pow(-source.getValue(x1) + source.getValue(x2), 2.0)
-                    + Math.pow(-source.getValue(y1) + source.getValue(y2), 2.0)))
-                    * source.getValue(lambda) * fixAngle;
+            return -source.getValue(x4) * source.getValue(lambda) + source.getValue(x3) * source.getValue(lambda);
         } else if (x2.equals(var)) {
-            return source.getValue(x4) * source.getValue(lambda) + source.getValue(x3) * source.getValue(lambda)
-                    - ((source.getValue(x2) - source.getValue(x1)) * Math.sqrt(Math.pow(-source.getValue(x3) + source.getValue(x4), 2.0)
-                    + Math.pow(-source.getValue(y3) + source.getValue(y4), 2.0))
-                    / Math.sqrt(Math.pow(-source.getValue(x1) + source.getValue(x2), 2.0)
-                    + Math.pow(-source.getValue(y1) + source.getValue(y2), 2.0)))
-                    * source.getValue(lambda) * fixAngle;
+            return source.getValue(x4) * source.getValue(lambda) - source.getValue(x3) * source.getValue(lambda);
         } else if (x3.equals(var)) {
-            return -source.getValue(x2) * source.getValue(lambda) + source.getValue(x1) * source.getValue(lambda)
-                    + ((source.getValue(x4) - source.getValue(x3)) * Math.sqrt(Math.pow(-source.getValue(x2) + source.getValue(x1), 2.0)
-                    + Math.pow(-source.getValue(y1) + source.getValue(y2), 2.0))
-                    / Math.sqrt(Math.pow(-source.getValue(x4) + source.getValue(x3), 2.0)
-                    + Math.pow(-source.getValue(y4) + source.getValue(y3), 2.0)))
-                    * source.getValue(lambda) * fixAngle;
+            return -source.getValue(x2) * source.getValue(lambda) + source.getValue(x1) * source.getValue(lambda);
         } else if (x4.equals(var)) {
-            return source.getValue(x2) * source.getValue(lambda) - source.getValue(x1) * source.getValue(lambda)
-                    - ((source.getValue(x4) - source.getValue(x3)) * Math.sqrt(Math.pow(-source.getValue(x1) + source.getValue(x2), 2.0)
-                    + Math.pow(-source.getValue(y1) + source.getValue(y2), 2.0))
-                    / Math.sqrt(Math.pow(-source.getValue(x4) + source.getValue(x3), 2.0)
-                    + Math.pow(-source.getValue(y4) + source.getValue(y3), 2.0)))
-                    * source.getValue(lambda) * fixAngle;
+            return source.getValue(x2) * source.getValue(lambda) - source.getValue(x1) * source.getValue(lambda);
         } else if (y1.equals(var)) {
-            return -source.getValue(y4) * source.getValue(lambda) + source.getValue(y3) * source.getValue(lambda)
-                    + ((source.getValue(y2) - source.getValue(y1)) * Math.sqrt(Math.pow(-source.getValue(x3) + source.getValue(x4), 2.0)
-                    + Math.pow(-source.getValue(y3) + source.getValue(y4), 2.0))
-                    / Math.sqrt(Math.pow(-source.getValue(x1) + source.getValue(x2), 2.0)
-                    + Math.pow(-source.getValue(y1) + source.getValue(y2), 2.0)))
-                    * source.getValue(lambda) * fixAngle;
+            return -source.getValue(y4) * source.getValue(lambda) + source.getValue(y3) * source.getValue(lambda);
         } else if (y2.equals(var)) {
-            return source.getValue(y4) * source.getValue(lambda) - source.getValue(y3) * source.getValue(lambda)
-                    - ((source.getValue(y2) - source.getValue(y1)) * Math.sqrt(Math.pow(-source.getValue(x3) + source.getValue(x4), 2.0)
-                    + Math.pow(-source.getValue(y3) + source.getValue(y4), 2.0))
-                    / Math.sqrt(Math.pow(-source.getValue(x1) + source.getValue(x2), 2.0)
-                    + Math.pow(-source.getValue(y1) + source.getValue(y2), 2.0)))
-                    * source.getValue(lambda) * fixAngle;
+            return source.getValue(y4) * source.getValue(lambda) - source.getValue(y3) * source.getValue(lambda);
         } else if (y3.equals(var)) {
-            return -source.getValue(y2) * source.getValue(lambda) + source.getValue(y1) * source.getValue(lambda)
-                    + ((source.getValue(y4) - source.getValue(y3)) * Math.sqrt(Math.pow(-source.getValue(x1) + source.getValue(x2), 2.0)
-                    + Math.pow(-source.getValue(y1) + source.getValue(y2), 2.0))
-                    / Math.sqrt(Math.pow(-source.getValue(x3) + source.getValue(x4), 2.0)
-                    + Math.pow(-source.getValue(y3) + source.getValue(y4), 2.0)))
-                    * source.getValue(lambda) * fixAngle;
+            return -source.getValue(y2) * source.getValue(lambda) + source.getValue(y1) * source.getValue(lambda);
         } else if (y4.equals(var)) {
-            return source.getValue(y2) * source.getValue(lambda) - source.getValue(y1) * source.getValue(lambda)
-                    - ((source.getValue(y4) - source.getValue(y3)) * Math.sqrt(Math.pow(-source.getValue(x1) + source.getValue(x2), 2.0)
-                    + Math.pow(-source.getValue(y1) + source.getValue(y2), 2.0))
-                    / Math.sqrt(Math.pow(-source.getValue(x3) + source.getValue(x4), 2.0)
-                    + Math.pow(-source.getValue(y3) + source.getValue(y4), 2.0)))
-                    * source.getValue(lambda) * fixAngle;
+            return source.getValue(y2) * source.getValue(lambda) - source.getValue(y1) * source.getValue(lambda);
         } else if (lambda.equals(var)) {
             return source.getValue(x2) * source.getValue(x4)
                     - source.getValue(x1) * source.getValue(x4)
@@ -107,19 +62,14 @@ public class FixAngle extends Constraint {
                     + source.getValue(y2) * source.getValue(y4)
                     - source.getValue(y1) * source.getValue(y4)
                     - source.getValue(y2) * source.getValue(y3)
-                    + source.getValue(y1) * source.getValue(y3)
-                    - Math.sqrt(Math.pow(-source.getValue(x1) + source.getValue(x2), 2.0)
-                    + Math.pow(-source.getValue(y1) + source.getValue(y2), 2.0))
-                    * Math.sqrt(Math.pow(-source.getValue(x3) + source.getValue(x4), 2.0)
-                    + Math.pow(-source.getValue(y3) + source.getValue(y4), 2.0))
-                    * fixAngle;
+                    + source.getValue(y1) * source.getValue(y3);
         } else
             return 0.0;
     }
 
     @Override
     public double doubleDiff(Variable varOne, Variable varTwo, Source source) {
-        /*// X1
+        // X1
         Variable x1 = firstLine.getP1().getSquaredSummX().getVariable();
         // X2
         Variable x2 = firstLine.getP2().getSquaredSummX().getVariable();
@@ -324,7 +274,7 @@ public class FixAngle extends Constraint {
                 return 0.0;
             }
             return 0.0;
-        }*/
+        }
 
         return 0.0;
     }
